@@ -36,3 +36,18 @@
     transform: rotate(360deg);
   }
 }
+
+.my-load-spinner{
+  width: 200px;
+  height: 200px;
+  border-width: 20px
+}
+
+.modal-90w{
+  width: 70%;
+}
+
+.my-link{
+  text-decoration: none;
+
+}

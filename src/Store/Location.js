@@ -12,7 +12,9 @@ class Location {
         zip_code: '',
         phone: '',
         tax_id: '',
-        website: ''
+        website: '',
+        userAdmin: {},
+        otherUsers:[]
     }
 
     constructor() {
@@ -39,7 +41,9 @@ class Location {
             zip_code: '',
             phone: '',
             tax_id: '',
-            website: ''
+            website: '',
+            userAdmin: {},
+            otherUsers:[]
         }
     }
 

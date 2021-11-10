@@ -2,6 +2,7 @@ import {Col, Form, Row} from "react-bootstrap";
 import React from "react";
 import Company from "../../Store/Company";
 import {observer} from "mobx-react-lite";
+import User from "../../Store/User";
 
 
 const InputFormUser = observer(({value, id, title}) => {
@@ -13,13 +14,13 @@ const InputFormUser = observer(({value, id, title}) => {
                 <Col>
                     {id === 'email' ?
                         <Form.Control type="email" placeholder={title} id={id} value={value}
-                                      onChange={(obj) => Company.editAdminCompany(id, obj.target.value)}/>
+                                      onChange={(obj) => User.edit(id, obj.target.value)}/>
                         : id === 'password' ?
                             <Form.Control type="password" placeholder={title} id={id} value={value}
-                                          onChange={(obj) => Company.editAdminCompany(id, obj.target.value)}/>
+                                          onChange={(obj) => User.edit(id, obj.target.value)}/>
                             : <Form.Control type="text" placeholder={title} id={id} value={value}
                                             onChange={(obj) => {
-                                                Company.editAdminCompany(id, obj.target.value)
+                                                User.edit(id, obj.target.value)
                                             }}/>
                     }
                 </Col>

@@ -31,7 +31,7 @@ class Company {
         status: true
     }
 
-    listLocation = []
+    listLocation = [] // [{ ..., userAdmin:{}, otherUsers:[{}, {}...] }]
 
     constructor() {
         makeAutoObservable(this)
@@ -43,6 +43,10 @@ class Company {
 
     edit(field, value) {
         this.object[field] = value
+    }
+
+    editAdminCompanyObject(object) {
+        this.adminCompany = object
     }
 
     editAdminCompany(field, value) {
@@ -57,13 +61,39 @@ class Company {
         this.listLocation = this.listLocation.filter((item, i) => i !== index)
     }
 
+    removeListLocationOtherUsers(indexLocation, index) {
+        this.listLocation[indexLocation].otherUsers = this.listLocation[indexLocation].otherUsers.filter((item, i) => i !== index)
+    }
+
+    removeListLocationAdminUser(index) {
+        this.listLocation[index].userAdmin = {
+            objectIdRole: 'null',
+            city: '',
+            street: '',
+            state: '',
+            first_name: '',
+            email: '',
+            zip: '',
+            last_name: '',
+            phone: '',
+            login: '',
+            password: '',
+            status: true
+        }
+    }
+
     editLocationByIndex(index, object) {
         this.listLocation[index] = object
+    }
+
+    editLocationFieldByIndex(index, field, value) {
+        this.listLocation[index][field] = value
     }
 
     getLocation(index) {
         return this.listLocation[index]
     }
+
 
     resetAdminCompany() {
         this.adminCompany = {
