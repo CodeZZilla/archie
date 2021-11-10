@@ -17,7 +17,7 @@ class Company {
     }
 
     adminCompany = {
-        objectIdRole: '',
+        objectIdRole: 'null',
         city: '',
         street: '',
         state: '',
@@ -65,6 +65,23 @@ class Company {
         return this.listLocation[index]
     }
 
+    resetAdminCompany() {
+        this.adminCompany = {
+            objectIdRole: 'null',
+            city: '',
+            street: '',
+            state: '',
+            first_name: '',
+            email: '',
+            zip: '',
+            last_name: '',
+            phone: '',
+            login: '',
+            password: '',
+            status: true
+        }
+    }
+
     resetCompany() {
         this.object = {
             name_company: '',
@@ -82,7 +99,7 @@ class Company {
         }
 
         this.adminCompany = {
-            objectIdRole: '',
+            objectIdRole: 'null',
             city: '',
             street: '',
             state: '',

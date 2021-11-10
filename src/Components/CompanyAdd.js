@@ -74,12 +74,12 @@ const CompanyAdd = observer(() => {
                                 <Row className="mt-3">
                                     <Form.Label className="col-4">
                                         <Button variant="primary" onClick={() => setShowOwnerModal(true)}>
-                                            Add Admin
+                                            Set Admin
                                         </Button>
                                     </Form.Label>
 
                                     <Col className="d-flex">
-                                        <p>{Company.adminCompany.objectIdRole === '' ? 'No Admin' :  Company.adminCompany.objectIdRole}</p>
+                                        <p>{Company.adminCompany.objectIdRole === 'null' ? 'No Admin' :  Company.adminCompany.objectIdRole}</p>
                                     </Col>
 
                                     <Modal

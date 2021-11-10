@@ -18,7 +18,9 @@ const InputFormUser = observer(({value, id, title}) => {
                             <Form.Control type="password" placeholder={title} id={id} value={value}
                                           onChange={(obj) => Company.editAdminCompany(id, obj.target.value)}/>
                             : <Form.Control type="text" placeholder={title} id={id} value={value}
-                                            onChange={(obj) => Company.editAdminCompany(id, obj.target.value)}/>
+                                            onChange={(obj) => {
+                                                Company.editAdminCompany(id, obj.target.value)
+                                            }}/>
                     }
                 </Col>
             </Row>
