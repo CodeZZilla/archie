@@ -10,7 +10,7 @@ const InputFormCompany = observer(({value, id, title}) => {
 
         useEffect(() => {
             setValueMiddle(value)
-        })
+        }, [])
 
         return (
             <Row className="mt-3">
