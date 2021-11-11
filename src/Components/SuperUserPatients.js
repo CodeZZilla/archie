@@ -26,7 +26,7 @@ const SuperUserPatients = observer(({fun, addStatus, indexLocation}) => {
                 <Container>
                     <Row className="mt-4">
                         <Col>
-                            <NavLink className="w-100 btn btn-primary" to='/home'>
+                            <NavLink className="w-100 btn btn-primary" to='/new-patient'>
                                 New client/patient
                             </NavLink>
                         </Col>

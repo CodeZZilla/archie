@@ -6,6 +6,10 @@ import Home from "./Components/Home";
 import CompanyList from "./Components/CompanyList";
 import Backendless from 'backendless';
 import SuperUserPatients from "./Components/SuperUserPatients";
+import PatientAdd from "./Components/PatientAdd";
+import SpectaclePrescriptionForm from "./Components/SpectaclePrescriptionForm";
+import SpectaclePrescription from "./Store/SpectaclePrescription";
+import SpectaclePrescriptionTable from "./Components/SpectaclePrescriptionTable";
 
 
 const APP_ID = '70833ED6-CF55-DCA8-FFD1-0F4165255600';
@@ -26,8 +30,14 @@ const App = () => {
                 <Route path='/company-list' component={CompanyList}/>
                 <Route path='/company-item/:id' component={CompanyAdd}/>
                 <Route path='/patients-super-user' component={SuperUserPatients}/>
-                {/*<Route path='/location-item/:id' component={LocationItem}/>*/}
-                {/*<Route path='/user-add' component={UserAdd}/>*/}
+                <Route path='/new-patient'>
+                    <PatientAdd title='Add Patient' btnText='Save'/>
+                </Route>
+                <Route path='/spectacle-prescription' component={SpectaclePrescriptionForm}/>
+                <Route path='/spectacle-prescription-table' component={SpectaclePrescriptionTable}/>
+                <Route path='/spectacle-prescription-item/:id'>
+                    <SpectaclePrescriptionForm read={true}/>
+                </Route>
                 {/*<Route path='/client-add' component={Client}/>*/}
             </Switch>
         </div>

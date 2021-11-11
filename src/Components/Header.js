@@ -1,6 +1,7 @@
 import React from "react";
 import {Container, Nav, Navbar, NavDropdown} from "react-bootstrap";
 import {NavLink} from "react-router-dom";
+import SpectaclePrescription from "../Store/SpectaclePrescription";
 
 
 const Header = () => {
@@ -30,7 +31,12 @@ const Header = () => {
                     <NavLink className="my-link h5 text-secondary m-3" to="/patients-super-user">
                         Clients/Patients
                     </NavLink>
-
+                    <NavLink className="my-link h5 text-secondary m-3" to="/spectacle-prescription">
+                        Spectacle Prescription
+                    </NavLink>
+                    <NavLink className="my-link h5 text-secondary m-3" to="/spectacle-prescription-table">
+                        Spectacle Prescription All
+                    </NavLink>
                 </Nav>
             </Navbar.Collapse>
         </Container>

@@ -28,13 +28,13 @@ const CompanyAdd = observer(() => {
             e.preventDefault()
             if (Company.object.email !== '') {
                 try {
+                    let loadRelationsQueryBuilder = Backendless.LoadRelationsQueryBuilder.create();
+                    loadRelationsQueryBuilder.setRelationName("users_role");
                     let saveCompany = await Backendless.Data.of("Company").save(Company.object)
                     if (Company.adminCompany.email !== '' && Company.adminCompany.objectIdRole !== 'null') {
                         let userAdminCompany = await Backendless.UserService.register(Company.getAdminCompanyDb())
 
                         //получение обьектов связи и перезапись их
-                        let loadRelationsQueryBuilder = Backendless.LoadRelationsQueryBuilder.create();
-                        loadRelationsQueryBuilder.setRelationName("users_role");
                         let arrUsersAdminsCompany = await Backendless.Data.of('Roles').loadRelations({objectId: Company.adminCompany.objectIdRole}, loadRelationsQueryBuilder)
                         await Backendless.Data.of("Roles").setRelation({objectId: Company.adminCompany.objectIdRole},
                             "users_role", [...arrUsersAdminsCompany, {objectId: userAdminCompany.objectId}])
@@ -115,10 +115,7 @@ const CompanyAdd = observer(() => {
                                 let userAdminLocation = await Backendless.UserService.register(userLocationObject)
 
                                 //получение обьектов связи и перезапись их
-                                let loadRelationsQueryBuilder0 = Backendless.LoadRelationsQueryBuilder.create();
-                                loadRelationsQueryBuilder0.setRelationName("users_role");
-                                let arrUsersRole = await Backendless.Data.of('Roles').loadRelations({objectId: otherUser.objectIdRole},
-                                    loadRelationsQueryBuilder0)
+                                let arrUsersRole = await Backendless.Data.of('Roles').loadRelations({objectId: otherUser.objectIdRole}, loadRelationsQueryBuilder)
                                 await Backendless.Data.of("Roles").setRelation({objectId: otherUser.objectIdRole},
                                     "users_role", [...arrUsersRole, {objectId: userAdminLocation.objectId}])
 

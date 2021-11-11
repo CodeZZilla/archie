@@ -16,12 +16,12 @@ class Patient {
         insurance_providers: '',
         first_name: '',
         email: '',
-        date_of_birthday: null,
+        date_of_birthday: '',
         zip: '',
         hippa_consent: '',
         ext: '',
         phone_mobile: '',
-        hippa_consent_date: null,
+        hippa_consent_date: '',
         phone_day: '',
         active: true,
         last_name: '',
@@ -32,7 +32,7 @@ class Patient {
         contact_method: '',
         incurance_number: '',
         city_town: '',
-        referred_by: '',
+        referred_by: 'null',
         street_address_extra: ''
     }
 
@@ -80,7 +80,7 @@ class Patient {
             contact_method: '',
             incurance_number: '',
             city_town: '',
-            referred_by: '',
+            referred_by: 'null',
             street_address_extra: ''
         }
     }

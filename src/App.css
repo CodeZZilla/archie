@@ -49,5 +49,12 @@
 
 .my-link{
   text-decoration: none;
+}
 
+.my_th{
+  background: #7a9edc;
+}
+
+.my-table{
+  border-radius: 10px;
 }
