@@ -1,5 +1,5 @@
 import {Col, Row, Button, Container, Form} from "react-bootstrap";
-import React, {useState, useEffect} from "react";
+import React, {useEffect} from "react";
 import {observer} from "mobx-react-lite";
 import Company from "../Store/Company";
 import Location from "../Store/Location";
@@ -13,7 +13,7 @@ const LocationAddEdit = observer(({title, btnText, location, indexLocation, fun}
             }else {
                 Location.reset()
             }
-        }, [])
+        },[])
 
         let onSaveCompany = async (e) => {
             e.preventDefault()

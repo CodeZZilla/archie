@@ -1,5 +1,5 @@
 import {observer} from "mobx-react-lite";
-import {Button, Col, Container, Form, Row, Spinner, Table} from "react-bootstrap";
+import {Button, Col, Container, Form, Row, Table} from "react-bootstrap";
 import React, {useEffect, useState} from "react";
 import Company from "../Store/Company";
 import {BsFillTrashFill} from "react-icons/all";
@@ -29,7 +29,7 @@ const ShowUsersLocation = observer(({indexLocation}) => {
             }
         }
         setOtherUsers(arr)
-    }, [])
+    })
 
 
     return (

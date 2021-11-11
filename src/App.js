@@ -3,7 +3,9 @@ import {Route, Switch} from "react-router-dom";
 import Header from "./Components/Header";
 import CompanyAdd from "./Components/CompanyAdd";
 import Home from "./Components/Home";
+import CompanyList from "./Components/CompanyList";
 import Backendless from 'backendless';
+import SuperUserPatients from "./Components/SuperUserPatients";
 
 
 const APP_ID = '70833ED6-CF55-DCA8-FFD1-0F4165255600';
@@ -21,9 +23,9 @@ const App = () => {
                 <Route path='/company-add'>
                     <CompanyAdd/>
                 </Route>
-                {/*<Route path='/company-list' component={CompanyList}/>*/}
-                {/*<Route path='/company-item/:id' component={CompanyItem}/>*/}
-                {/*<Route path='/location-list' component={LocationList}/>*/}
+                <Route path='/company-list' component={CompanyList}/>
+                <Route path='/company-item/:id' component={CompanyAdd}/>
+                <Route path='/patients-super-user' component={SuperUserPatients}/>
                 {/*<Route path='/location-item/:id' component={LocationItem}/>*/}
                 {/*<Route path='/user-add' component={UserAdd}/>*/}
                 {/*<Route path='/client-add' component={Client}/>*/}

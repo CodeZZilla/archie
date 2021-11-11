@@ -88,7 +88,7 @@ const UserAdd = observer(({fun, addStatus, indexLocation}) => {
                 </div> :
                 <div>
                     <Form>
-                        <Container className="mt-5">
+                        <Container className="mt-3">
                             <Row>
                                 <Col className="d-flex justify-content-between">
                                     <h1 className="text-center">Create User</h1>
@@ -96,7 +96,7 @@ const UserAdd = observer(({fun, addStatus, indexLocation}) => {
                                             size="lg">Create</Button>
                                 </Col>
                             </Row>
-                            <Row className="mt-5 mb-5 justify-content-md-center">
+                            <Row className="mt-3 mb-5 justify-content-md-center">
                                 <Col className="col-11">
                                     <InputFormUser value={User.object.first_name} id="first_name"
                                                    title="First Name"/>

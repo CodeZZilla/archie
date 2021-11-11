@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {Container, Nav, Navbar, NavDropdown} from "react-bootstrap";
 import {NavLink} from "react-router-dom";
 
@@ -27,33 +27,10 @@ const Header = () => {
                             Help
                         </NavLink>
                     </NavDropdown>
-                    <NavDropdown className="my-link h5 text-secondary mt-2" title="Location" id="basic-nav-dropdown">
-                        <NavLink className="my-link h5 text-secondary m-3" to="/location-list">
-                            List
-                        </NavLink>
-                        <NavDropdown.Divider/>
-                        <NavLink className="my-link h5 text-secondary m-3" to="/home">
-                            Help
-                        </NavLink>
-                    </NavDropdown>
-                    <NavDropdown className="my-link h5 text-secondary mt-2" title="UserAdd" id="basic-nav-dropdown">
-                        <NavLink className="my-link h5 text-secondary m-3" to="/user-add">
-                            Add
-                        </NavLink>
-                        <NavDropdown.Divider/>
-                        <NavLink className="my-link h5 text-secondary m-3" to="/home">
-                            Help
-                        </NavLink>
-                    </NavDropdown>
-                    <NavDropdown className="my-link h5 text-secondary mt-2" title="Client" id="basic-nav-dropdown">
-                        <NavLink className="my-link h5 text-secondary m-3" to="/client-add">
-                            Add
-                        </NavLink>
-                        <NavDropdown.Divider/>
-                        <NavLink className="my-link h5 text-secondary m-3" to="/home">
-                            Help
-                        </NavLink>
-                    </NavDropdown>
+                    <NavLink className="my-link h5 text-secondary m-3" to="/patients-super-user">
+                        Clients/Patients
+                    </NavLink>
+
                 </Nav>
             </Navbar.Collapse>
         </Container>

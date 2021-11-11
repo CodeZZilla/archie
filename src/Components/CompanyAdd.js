@@ -2,7 +2,7 @@ import {Col, Row, Button, Container, Form, Table, Modal, Spinner, Dropdown} from
 import React, {useState} from "react";
 import Backendless from "backendless";
 import LocationAddEdit from "./LocationAddEdit";
-import {BsFillTrashFill, FaBeer} from "react-icons/all";
+import {FaBeer} from "react-icons/all";
 import UserAdd from "./UserAdd";
 import InputFormCompany from "./Inputs/InputFormCompany";
 import {observer} from "mobx-react-lite";
@@ -10,7 +10,7 @@ import Company from "../Store/Company";
 import ShowUsersLocation from "./ShowUsersLocation";
 
 
-const CompanyAdd = observer((parent, query) => {
+const CompanyAdd = observer(() => {
         const [btnSpinnerShow, setBtnSpinnerShow] = useState(false)
         const [show, setShow] = useState(false)
         const [showUserAdminLocation, setShowUserAdminLocation] = useState(false)
@@ -18,144 +18,138 @@ const CompanyAdd = observer((parent, query) => {
         const [locationEdit, setLocationEdit] = useState({})
         const [locationIndexEdit, setLocationIndexEdit] = useState(null)
         const [showEditLocation, setShowEditLocation] = useState(false)
-        const [isLoadAdminUser, setIsLoadAdminUser] = useState(false)
-        const [adminUser, setAdminUserRole] = useState({})
         const [indexLocation, setIndexLocation] = useState(null)
         const [showUsersOtherLocation, setShowUsersOtherLocation] = useState(false)
         const [showUsersAllLocation, setShowUsersAllLocation] = useState(false)
 
 
-        let loadUserByObjectId = async () => {
-            setIsLoadAdminUser(true)
-            let userRole = await Backendless.Data.of("Roles").findById(Company.adminCompany.objectIdRole)
-            setAdminUserRole(userRole)
-            setIsLoadAdminUser(false)
-        }
-
-
         let onFormSubmit = async (e) => {
             setBtnSpinnerShow(true)
             e.preventDefault()
-            if (Company.adminCompany.email !== '' && Company.adminCompany.objectIdRole !== 'null') {
-                let saveCompany = await Backendless.Data.of("Company").save(Company.object)
-                let userAdminCompanyObject = {
-                    city: Company.adminCompany.city,
-                    street: Company.adminCompany.street,
-                    state: Company.adminCompany.state,
-                    first_name: Company.adminCompany.first_name,
-                    email: Company.adminCompany.email,
-                    zip: Company.adminCompany.zip,
-                    last_name: Company.adminCompany.last_name,
-                    phone: Company.adminCompany.phone,
-                    login: Company.adminCompany.login,
-                    password: Company.adminCompany.password,
-                    status: Company.adminCompany.status
-                }
-                let userAdminCompany = await Backendless.UserService.register(userAdminCompanyObject)
+            if (Company.object.email !== '') {
+                try {
+                    let saveCompany = await Backendless.Data.of("Company").save(Company.object)
+                    if (Company.adminCompany.email !== '' && Company.adminCompany.objectIdRole !== 'null') {
+                        let userAdminCompany = await Backendless.UserService.register(Company.getAdminCompanyDb())
 
-                //получение обьектов связи и перезапись их
-                let loadRelationsQueryBuilder = Backendless.LoadRelationsQueryBuilder.create();
-                loadRelationsQueryBuilder.setRelationName("users_role");
-                let arrUsersAdminsCompany = await Backendless.Data.of('Roles').loadRelations({objectId: Company.adminCompany.objectIdRole}, loadRelationsQueryBuilder)
-                await Backendless.Data.of("Roles").setRelation({objectId: Company.adminCompany.objectIdRole},
-                    "users_role", [...arrUsersAdminsCompany, {objectId: userAdminCompany.objectId}])
+                        //получение обьектов связи и перезапись их
+                        let loadRelationsQueryBuilder = Backendless.LoadRelationsQueryBuilder.create();
+                        loadRelationsQueryBuilder.setRelationName("users_role");
+                        let arrUsersAdminsCompany = await Backendless.Data.of('Roles').loadRelations({objectId: Company.adminCompany.objectIdRole}, loadRelationsQueryBuilder)
+                        await Backendless.Data.of("Roles").setRelation({objectId: Company.adminCompany.objectIdRole},
+                            "users_role", [...arrUsersAdminsCompany, {objectId: userAdminCompany.objectId}])
 
-                //admin company запись в компани его
-                await Backendless.Data.of("Company").setRelation({objectId: saveCompany.objectId}, 'owner_company', [{objectId: userAdminCompany.objectId}])
-
-                //добавление локаций в бд
-                if (Company.listLocation.length !== 0) {
-                    for await (let location of Company.listLocation) {
-                        let saveLocationObject = {
-                            name_location: location.name_location,
-                            city_town: location.city_town,
-                            email: location.email,
-                            main_contact: location.main_contact,
-                            street_address: location.street_address,
-                            street_address_extra: location.street_address_extra,
-                            state_province: location.state,
-                            zip_code: location.zip_code,
-                            phone: location.phone,
-                            tax_id: location.tax_id,
-                            website: location.website,
-                        }
-                        let saveLocation = await Backendless.Data.of("Location").save(saveLocationObject)
-                        // 1 к многому через дополнительную таблицу (к таблице Коспани)
-                        let relation = await Backendless.Data.of("CompanyLocation").save({})
-                        await Backendless.Data.of("CompanyLocation").setRelation(relation.objectId, "Location", [saveLocation.objectId])
-                        await Backendless.Data.of("CompanyLocation").setRelation(relation.objectId, "Company", [saveCompany.objectId])
-
-                        //admin location запись в location его если есть
-                        if (location.userAdmin.first_name === '' || location.userAdmin.email === '') {
-                            let userAdminLocationObject = {
-                                city: location.userAdmin.city,
-                                street: location.userAdmin.street,
-                                state: location.userAdmin.state,
-                                first_name: location.userAdmin.first_name,
-                                email: location.userAdmin.email,
-                                zip: location.userAdmin.zip,
-                                last_name: location.userAdmin.last_name,
-                                phone: location.userAdmin.phone,
-                                login: location.userAdmin.login,
-                                password: location.userAdmin.password,
-                                status: location.userAdmin.status
-                            }
-                            let userAdminLocation = await Backendless.UserService.register(userAdminLocationObject)
-                            await Backendless.Data.of("Location").setRelation({objectId: saveLocation.objectId}, 'admin_location', [{objectId: userAdminLocation}])
-                        } else {
-                            alert('Admin User location: ' + location.name_location + '\ndid not sign up')
-                        }
-
-                        //save other users
-                        for await (let otherUser of location.otherUsers){
-                            let userLocationObject = {
-                                city: otherUser.city,
-                                street: otherUser.street,
-                                state: otherUser.state,
-                                first_name: otherUser.first_name,
-                                email: otherUser.email,
-                                zip: otherUser.zip,
-                                last_name: otherUser.last_name,
-                                phone: otherUser.phone,
-                                login: otherUser.login,
-                                password: otherUser.password,
-                                status: otherUser.status
-                            }
-                            let userAdminLocation = await Backendless.UserService.register(userLocationObject)
-
-                            //получение обьектов связи и перезапись их
-                            let loadRelationsQueryBuilder0 = Backendless.LoadRelationsQueryBuilder.create();
-                            loadRelationsQueryBuilder0.setRelationName("users_role");
-                            let arrUsersRole = await Backendless.Data.of('Roles').loadRelations({objectId: otherUser.objectIdRole},
-                                loadRelationsQueryBuilder0)
-                            await Backendless.Data.of("Roles").setRelation({objectId: otherUser.objectIdRole},
-                                "users_role", [...arrUsersRole, {objectId: userAdminLocation.objectId}])
-
-                            //получение обьектов связи и перезапись их
-                            let loadRelationsQueryBuilder = Backendless.LoadRelationsQueryBuilder.create();
-                            loadRelationsQueryBuilder.setRelationName("other_users");
-                            let arrUsersOtherLocation = await Backendless.Data.of('Location').loadRelations({objectId: saveLocation.objectId}, loadRelationsQueryBuilder)
-                            await Backendless.Data.of("Location").setRelation({objectId: saveLocation.objectId},
-                                "other_users", [...arrUsersOtherLocation, {objectId: userAdminLocation.objectId}])
-                        }
-
+                        //admin company запись в компани его
+                        await Backendless.Data.of("Company").setRelation({objectId: saveCompany.objectId},
+                            'owner_company', [{objectId: userAdminCompany.objectId}])
                     }
-                }
-                Company.resetCompany()
-            }
+                    //добавление локаций в бд
+                    if (Company.listLocation.length !== 0) {
+                        for await (let location of Company.listLocation) {
+                            let saveLocationObject = {
+                                name_location: location.name_location,
+                                city_town: location.city_town,
+                                email: location.email,
+                                main_contact: location.main_contact,
+                                street_address: location.street_address,
+                                street_address_extra: location.street_address_extra,
+                                state_province: location.state,
+                                zip_code: location.zip_code,
+                                phone: location.phone,
+                                tax_id: location.tax_id,
+                                website: location.website,
+                            }
+                            let saveLocation = await Backendless.Data.of("Location").save(saveLocationObject)
+                            // 1 к многому через дополнительную таблицу (к таблице Коспани)
+                            let relation = await Backendless.Data.of("CompanyLocation").save({})
+                            await Backendless.Data.of("CompanyLocation").setRelation(relation.objectId, "Location", [saveLocation.objectId])
+                            await Backendless.Data.of("CompanyLocation").setRelation(relation.objectId, "Company", [saveCompany.objectId])
 
+                            //admin location запись в location его если есть
+                            if (location.userAdmin.password !== undefined) {
+                                if (location.userAdmin.first_name !== '' && location.userAdmin.email !== '') {
+                                    let userAdminLocationObject = {
+                                        city: location.userAdmin.city,
+                                        street: location.userAdmin.street,
+                                        state: location.userAdmin.state,
+                                        first_name: location.userAdmin.first_name,
+                                        email: location.userAdmin.email,
+                                        zip: location.userAdmin.zip,
+                                        last_name: location.userAdmin.last_name,
+                                        phone: location.userAdmin.phone,
+                                        login: location.userAdmin.login,
+                                        password: location.userAdmin.password,
+                                        status: location.userAdmin.status
+                                    }
+                                    let userAdminLocation = await Backendless.UserService.register(userAdminLocationObject)
+                                    await Backendless.Data.of("Location").setRelation({objectId: saveLocation.objectId},
+                                        'admin_location', [{objectId: userAdminLocation.objectId}])
+
+                                    //получение обьектов связи и перезапись их
+                                    let loadRelations = Backendless.LoadRelationsQueryBuilder.create();
+                                    loadRelations.setRelationName("users_role");
+                                    let arrUsersRole = await Backendless.Data.of('Roles').loadRelations(
+                                        {objectId: userAdminLocation.objectId}, loadRelations)
+                                    await Backendless.Data.of("Roles").setRelation({objectId: location.userAdmin.objectIdRole},
+                                        "users_role", [...arrUsersRole, {objectId: userAdminLocation.objectId}])
+                                } else {
+                                    alert('Admin User location: ' + location.name_location + '\ndid not sign up')
+                                }
+                            }
+
+                            //save other users
+                            for await (let otherUser of location.otherUsers) {
+                                let userLocationObject = {
+                                    city: otherUser.city,
+                                    street: otherUser.street,
+                                    state: otherUser.state,
+                                    first_name: otherUser.first_name,
+                                    email: otherUser.email,
+                                    zip: otherUser.zip,
+                                    last_name: otherUser.last_name,
+                                    phone: otherUser.phone,
+                                    login: otherUser.login,
+                                    password: otherUser.password,
+                                    status: otherUser.status
+                                }
+                                let userAdminLocation = await Backendless.UserService.register(userLocationObject)
+
+                                //получение обьектов связи и перезапись их
+                                let loadRelationsQueryBuilder0 = Backendless.LoadRelationsQueryBuilder.create();
+                                loadRelationsQueryBuilder0.setRelationName("users_role");
+                                let arrUsersRole = await Backendless.Data.of('Roles').loadRelations({objectId: otherUser.objectIdRole},
+                                    loadRelationsQueryBuilder0)
+                                await Backendless.Data.of("Roles").setRelation({objectId: otherUser.objectIdRole},
+                                    "users_role", [...arrUsersRole, {objectId: userAdminLocation.objectId}])
+
+                                //получение обьектов связи и перезапись их
+                                let loadRelationsQueryBuilder = Backendless.LoadRelationsQueryBuilder.create();
+                                loadRelationsQueryBuilder.setRelationName("other_users");
+                                let arrUsersOtherLocation = await Backendless.Data.of('Location').loadRelations({objectId: saveLocation.objectId}, loadRelationsQueryBuilder)
+                                await Backendless.Data.of("Location").setRelation({objectId: saveLocation.objectId},
+                                    "other_users", [...arrUsersOtherLocation, {objectId: userAdminLocation.objectId}])
+                            }
+                        }
+                    }
+
+                    Company.resetCompany()
+                } catch (ex) {
+                    alert(ex.message)
+                }
+            }
             setBtnSpinnerShow(false)
         }
 
 
         return (
             <div>
-                <Form onSubmit={onFormSubmit}>
+                <Form>
                     <Container className="mt-5 mb-5">
                         <Row>
                             <Col className="d-flex justify-content-between">
                                 <h1 className="text-center">Create Company</h1>
-                                <Button className="d-flex justify-content-around" type="submit" variant="success"
+                                <Button className="d-flex justify-content-around" onClick={onFormSubmit} type="submit"
+                                        variant="success"
                                         size="lg">
                                     {btnSpinnerShow ?
                                         <Spinner
@@ -193,19 +187,9 @@ const CompanyAdd = observer((parent, query) => {
                                     </Form.Label>
 
                                     <Col className="d-flex">
-                                        {
-                                            isLoadAdminUser ?
-                                                <Spinner
-                                                    as="span"
-                                                    variant="primary"
-                                                    animation="border"
-                                                    role="status"
-                                                    aria-hidden="true"
-                                                /> :
-                                                <p>{Company.adminCompany.objectIdRole === 'null' ?
-                                                    'No Admin' :
-                                                    Company.adminCompany.last_name + ' ' + Company.adminCompany.first_name}</p>
-                                        }
+                                        <p>{Company.adminCompany.objectIdRole === 'null' ?
+                                            'No Admin' :
+                                            Company.adminCompany.last_name + ' ' + Company.adminCompany.first_name}</p>
                                     </Col>
 
                                     {/* modal add admin company user*/}
@@ -223,7 +207,6 @@ const CompanyAdd = observer((parent, query) => {
                                         <Modal.Body>
                                             <UserAdd fun={async () => {
                                                 setShowOwnerModal(false)
-                                                await loadUserByObjectId()
                                             }} addStatus="addAdminCompany"/>
                                         </Modal.Body>
                                     </Modal>

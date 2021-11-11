@@ -95,20 +95,19 @@ class Company {
     }
 
 
-    resetAdminCompany() {
-        this.adminCompany = {
-            objectIdRole: 'null',
-            city: '',
-            street: '',
-            state: '',
-            first_name: '',
-            email: '',
-            zip: '',
-            last_name: '',
-            phone: '',
-            login: '',
-            password: '',
-            status: true
+    getAdminCompanyDb() {
+        return {
+            city: this.adminCompany.city,
+            street: this.adminCompany.street,
+            state: this.adminCompany.state,
+            first_name: this.adminCompany.first_name,
+            email: this.adminCompany.email,
+            zip: this.adminCompany.zip,
+            last_name: this.adminCompany.last_name,
+            phone: this.adminCompany.phone,
+            login: this.adminCompany.login,
+            password: this.adminCompany.password,
+            status: this.adminCompany.status
         }
     }
 
