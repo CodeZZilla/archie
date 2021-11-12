@@ -4,7 +4,6 @@ import {Button, Col, Container, Form, InputGroup, Row, Spinner, Table} from "rea
 
 import SpectaclePrescription from "../Store/SpectaclePrescription";
 import Backendless from "backendless";
-import Patient from "../Store/Patient";
 import {useParams} from "react-router-dom/cjs/react-router-dom";
 
 
@@ -18,24 +17,22 @@ const SpectaclePrescriptionForm = observer(({read = false}) => {
     useEffect(async () => {
         if (!read) {
             SpectaclePrescription.reset()
-            let loadRelationsQueryBuilder = Backendless.LoadRelationsQueryBuilder.create();
-            loadRelationsQueryBuilder.setRelationName("users_role");
-            // Optician
-            let arrOpticians = await Backendless.Data.of('Roles').loadRelations({objectId: "0243FCB6-D04E-4F3D-AD5F-3FDA300A58C0"}, loadRelationsQueryBuilder)
-            // Optometrist
-            let arrOptometrists = await Backendless.Data.of('Roles').loadRelations({objectId: "1DE37DEA-91E2-4502-B24B-A593D0E8AA68"}, loadRelationsQueryBuilder)
-            setDoctors([...arrOpticians, ...arrOptometrists])
-
-            let clientsAll = await Backendless.Data.of('Client').find({})
-            setClients(clientsAll)
-
         } else {
             let spectaclePrescription = await Backendless.Data.of('SpectaclePrescription').findById(id)
             SpectaclePrescription.create(spectaclePrescription)
         }
+        let loadRelationsQueryBuilder = Backendless.LoadRelationsQueryBuilder.create();
+        loadRelationsQueryBuilder.setRelationName("users_role");
+        // Optician
+        let arrOpticians = await Backendless.Data.of('Roles').loadRelations({objectId: "0243FCB6-D04E-4F3D-AD5F-3FDA300A58C0"}, loadRelationsQueryBuilder)
+        // Optometrist
+        let arrOptometrists = await Backendless.Data.of('Roles').loadRelations({objectId: "1DE37DEA-91E2-4502-B24B-A593D0E8AA68"}, loadRelationsQueryBuilder)
+        setDoctors([...arrOpticians, ...arrOptometrists])
 
+        let clientsAll = await Backendless.Data.of('Client').find({})
+        setClients(clientsAll)
         setIsLoading(false)
-    })
+    }, [])
 
     let save = async (e) => {
         setBtnSpinnerShow(true)
@@ -48,7 +45,7 @@ const SpectaclePrescriptionForm = observer(({read = false}) => {
     return (
         isLoading ?
             <div>
-                <h1>Add Spectacle Prescription</h1>
+                <h1>{read?'Update':'Add'} Spectacle Prescription</h1>
                 <Container className="mt-3 mb-3">
                     <Row className="justify-content-md-center">
                         <Spinner className="my-load-spinner" animation="border" variant="secondary" role="status">
@@ -57,11 +54,11 @@ const SpectaclePrescriptionForm = observer(({read = false}) => {
                     </Row>
                 </Container>
             </div> :
-            <div>
+            <div className="mt-5">
                 <Container>
                     <Row>
                         <Col className="d-flex justify-content-between">
-                            <h1 className="text-center">Add Patient</h1>
+                            <h1 className="text-center">{read?'Update':'Add'} Spectacle Prescription</h1>
                             <Button className="d-flex justify-content-around" type="button" variant="success"
                                     onClick={save} size="lg">
                                 {btnSpinnerShow ?
@@ -72,7 +69,9 @@ const SpectaclePrescriptionForm = observer(({read = false}) => {
                                         aria-hidden="true"
                                     /> : null
                                 }
-                                Save
+                                {
+                                    read?'Update':'Save'
+                                }
                             </Button>
                         </Col>
                     </Row>
@@ -80,13 +79,13 @@ const SpectaclePrescriptionForm = observer(({read = false}) => {
                         <Table bordered>
                             <tbody className="container">
                             <tr className="row">
-                                <th className="col d-flex align-items-center justify-content-md-center">Client Name</th>
-                                <th className="col d-flex align-items-center justify-content-md-center">Prescription
+                                <th className="col d-flex align-items-center justify-content-md-center bg-light">Client Name</th>
+                                <th className="col d-flex align-items-center justify-content-md-center bg-light">Prescription
                                     Date
                                 </th>
-                                <th className="col d-flex align-items-center justify-content-md-center">Doctor</th>
-                                <th className="col d-flex align-items-center justify-content-md-center">Order Type</th>
-                                <th className="col d-flex align-items-center justify-content-md-center">Spectacle
+                                <th className="col d-flex align-items-center justify-content-md-center bg-light">Doctor</th>
+                                <th className="col d-flex align-items-center justify-content-md-center bg-light">Order Type</th>
+                                <th className="col d-flex align-items-center justify-content-md-center bg-light">Spectacle
                                     Prescription Image
                                 </th>
                             </tr>
@@ -132,21 +131,21 @@ const SpectaclePrescriptionForm = observer(({read = false}) => {
                         </Table>
                     </Row>
                     <Row className="mt-5">
-                        <Table bordered className="my-table">
+                        <Table bordered>
                             <tbody className="container">
                             <tr className="row">
                                 <th className="col"></th>
-                                <th className="col">Sphere</th>
-                                <th className="col">Cylinder</th>
-                                <th className="col">Axis</th>
-                                <th className="col">Decentration</th>
-                                <th className="col">Prism 1</th>
-                                <th className="col">Base 1</th>
-                                <th className="col">Prism 2</th>
-                                <th className="col">Base 2</th>
+                                <th className="col bg-light">Sphere</th>
+                                <th className="col bg-light">Cylinder</th>
+                                <th className="col bg-light">Axis</th>
+                                <th className="col bg-light">Decentration</th>
+                                <th className="col bg-light">Prism 1</th>
+                                <th className="col bg-light">Base 1</th>
+                                <th className="col bg-light">Prism 2</th>
+                                <th className="col bg-light">Base 2</th>
                             </tr>
                             <tr className="row">
-                                <th className="col d-flex align-items-center justify-content-md-center">R</th>
+                                <th className="col d-flex align-items-center justify-content-md-center bg-light">R</th>
                                 <td className="col">
                                     <Form.Control value={SpectaclePrescription.object.r_sphere}
                                                   onChange={(obj) => SpectaclePrescription.edit('r_sphere', obj.target.value)}/>
@@ -181,7 +180,7 @@ const SpectaclePrescriptionForm = observer(({read = false}) => {
                                 </td>
                             </tr>
                             <tr className="row">
-                                <th className="col d-flex align-items-center justify-content-md-center">L</th>
+                                <th className="col d-flex align-items-center justify-content-md-center bg-light">L</th>
                                 <td className="col">
                                     <Form.Control value={SpectaclePrescription.object.l_sphere}
                                                   onChange={(obj) => SpectaclePrescription.edit('l_sphere', obj.target.value)}/>
@@ -216,21 +215,21 @@ const SpectaclePrescriptionForm = observer(({read = false}) => {
                                 </td>
                             </tr>
                             <tr className="row">
-                                <th className="col d-flex align-items-center justify-content-md-center">Add R</th>
+                                <th className="col d-flex align-items-center justify-content-md-center bg-light">Add R</th>
                                 <td className="col">
                                     <Form.Control value={SpectaclePrescription.object.r_add}
                                                   onChange={(obj) => SpectaclePrescription.edit('r_add', obj.target.value)}/>
                                 </td>
-                                <th className="col d-flex align-items-center justify-content-md-center">R Height</th>
-                                <th className="col d-flex align-items-center justify-content-md-center">L Height</th>
-                                <th className="col d-flex align-items-center justify-content-md-center">Inset</th>
-                                <th className="col d-flex align-items-center justify-content-md-center">Total Dec</th>
-                                <th className="col d-flex align-items-center justify-content-md-center">R PD</th>
-                                <th className="col d-flex align-items-center justify-content-md-center">L PD</th>
+                                <th className="col d-flex align-items-center justify-content-md-center bg-light">R Height</th>
+                                <th className="col d-flex align-items-center justify-content-md-center bg-light">L Height</th>
+                                <th className="col d-flex align-items-center justify-content-md-center bg-light">Inset</th>
+                                <th className="col d-flex align-items-center justify-content-md-center bg-light">Total Dec</th>
+                                <th className="col d-flex align-items-center justify-content-md-center bg-light">R PD</th>
+                                <th className="col d-flex align-items-center justify-content-md-center bg-light">L PD</th>
                                 <td className="col"></td>
                             </tr>
                             <tr className="row">
-                                <th className="col d-flex align-items-center justify-content-md-center">Add L</th>
+                                <th className="col d-flex align-items-center justify-content-md-center bg-light">Add L</th>
                                 <td className="col">
                                     <Form.Control value={SpectaclePrescription.object.l_add}
                                                   onChange={(obj) => SpectaclePrescription.edit('l_add', obj.target.value)}/>

@@ -2,6 +2,7 @@ import React from "react";
 import {Container, Nav, Navbar, NavDropdown} from "react-bootstrap";
 import {NavLink} from "react-router-dom";
 import SpectaclePrescription from "../Store/SpectaclePrescription";
+import ContactLensPrescription from "../Store/ContactLensPrescription";
 
 
 const Header = () => {
@@ -31,12 +32,32 @@ const Header = () => {
                     <NavLink className="my-link h5 text-secondary m-3" to="/patients-super-user">
                         Clients/Patients
                     </NavLink>
-                    <NavLink className="my-link h5 text-secondary m-3" to="/spectacle-prescription">
-                        Spectacle Prescription
-                    </NavLink>
-                    <NavLink className="my-link h5 text-secondary m-3" to="/spectacle-prescription-table">
-                        Spectacle Prescription All
-                    </NavLink>
+                    <NavDropdown className="my-link h5 text-secondary mt-2" title="Spectacle Prescription" id="basic-nav-dropdown">
+                        <NavLink className="my-link h5 text-secondary m-3" to="/spectacle-prescription">
+                            Add
+                        </NavLink>
+                        <NavDropdown.Divider/>
+                        <NavLink className="my-link h5 text-secondary m-3" to="/spectacle-prescription-table">
+                            List
+                        </NavLink>
+                        <NavDropdown.Divider/>
+                        <NavLink className="my-link h5 text-secondary m-3" to="/home">
+                            Help
+                        </NavLink>
+                    </NavDropdown>
+                    <NavDropdown className="my-link h5 text-secondary mt-2" title="Contact Lens Prescription" id="basic-nav-dropdown">
+                        <NavLink className="my-link h5 text-secondary m-3" to="/contact-lens-prescription">
+                            Add
+                        </NavLink>
+                        <NavDropdown.Divider/>
+                        <NavLink className="my-link h5 text-secondary m-3" to="/contact-lens-prescription-table">
+                            List
+                        </NavLink>
+                        <NavDropdown.Divider/>
+                        <NavLink className="my-link h5 text-secondary m-3" to="/home">
+                            Help
+                        </NavLink>
+                    </NavDropdown>
                 </Nav>
             </Navbar.Collapse>
         </Container>

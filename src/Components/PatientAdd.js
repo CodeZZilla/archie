@@ -142,8 +142,17 @@ const PatientAdd = observer(({title, btnText, patient, indexPatient, fun}) => {
                                                   title="Street Address (extra)"/>
                             </Col>
                             <Col>
-                                <InputFormPatient value={Patient.object.contact_method} id="contact_method"
-                                                  title="Preferred contact method"/>
+                                <Form.Group className="mb-3">
+                                    <Form.Label>Preferred contact method</Form.Label>
+                                    <Form.Select className="me-sm-2" value={Patient.object.contact_method}
+                                                 onChange={(obj) => Patient.edit('contact_method', obj.target.value)}>
+                                        <option value="Email">Email</option>
+                                        <option value="Call">Call</option>
+                                        <option value="Text">Text</option>
+                                    </Form.Select>
+                                </Form.Group>
+                                {/*<InputFormPatient value={Patient.object.contact_method} id="contact_method"*/}
+                                {/*                  title="Preferred contact method"/>*/}
                             </Col>
                             <Col>
                                 <p>Upload Client Photo (in progress)</p>
