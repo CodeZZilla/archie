@@ -1,10 +1,12 @@
 import {observer} from "mobx-react-lite";
 import React, {useEffect, useState} from "react";
-import {Button, Col, Container, Form, InputGroup, Row, Spinner, Table} from "react-bootstrap";
-
+import {Button, Col, Container, Form, Row, Spinner, Table} from "react-bootstrap";
 import SpectaclePrescription from "../Store/SpectaclePrescription";
 import Backendless from "backendless";
-import {useParams} from "react-router-dom/cjs/react-router-dom";
+import {useParams} from "react-router-dom";
+import generateSelectValues from "../Business/GenerateSelectValues";
+import 'react-bootstrap-typeahead/css/Typeahead.css';
+import SelectAndSearch from "./Inputs/SelectAndSearch";
 
 
 const SpectaclePrescriptionForm = observer(({read = false}) => {
@@ -14,7 +16,9 @@ const SpectaclePrescriptionForm = observer(({read = false}) => {
     const [clients, setClients] = useState([])
     let {id} = useParams();
 
+
     useEffect(async () => {
+
         if (!read) {
             SpectaclePrescription.reset()
         } else {
@@ -45,7 +49,7 @@ const SpectaclePrescriptionForm = observer(({read = false}) => {
     return (
         isLoading ?
             <div>
-                <h1>{read?'Update':'Add'} Spectacle Prescription</h1>
+                <h1>{read ? 'Update' : 'Add'} Spectacle Prescription</h1>
                 <Container className="mt-3 mb-3">
                     <Row className="justify-content-md-center">
                         <Spinner className="my-load-spinner" animation="border" variant="secondary" role="status">
@@ -58,7 +62,7 @@ const SpectaclePrescriptionForm = observer(({read = false}) => {
                 <Container>
                     <Row>
                         <Col className="d-flex justify-content-between">
-                            <h1 className="text-center">{read?'Update':'Add'} Spectacle Prescription</h1>
+                            <h1 className="text-center">{read ? 'Update' : 'Add'} Spectacle Prescription</h1>
                             <Button className="d-flex justify-content-around" type="button" variant="success"
                                     onClick={save} size="lg">
                                 {btnSpinnerShow ?
@@ -70,7 +74,7 @@ const SpectaclePrescriptionForm = observer(({read = false}) => {
                                     /> : null
                                 }
                                 {
-                                    read?'Update':'Save'
+                                    read ? 'Update' : 'Save'
                                 }
                             </Button>
                         </Col>
@@ -79,12 +83,16 @@ const SpectaclePrescriptionForm = observer(({read = false}) => {
                         <Table bordered>
                             <tbody className="container">
                             <tr className="row">
-                                <th className="col d-flex align-items-center justify-content-md-center bg-light">Client Name</th>
+                                <th className="col d-flex align-items-center justify-content-md-center bg-light">Client
+                                    Name
+                                </th>
                                 <th className="col d-flex align-items-center justify-content-md-center bg-light">Prescription
                                     Date
                                 </th>
                                 <th className="col d-flex align-items-center justify-content-md-center bg-light">Doctor</th>
-                                <th className="col d-flex align-items-center justify-content-md-center bg-light">Order Type</th>
+                                <th className="col d-flex align-items-center justify-content-md-center bg-light">Order
+                                    Type
+                                </th>
                                 <th className="col d-flex align-items-center justify-content-md-center bg-light">Spectacle
                                     Prescription Image
                                 </th>
@@ -147,100 +155,198 @@ const SpectaclePrescriptionForm = observer(({read = false}) => {
                             <tr className="row">
                                 <th className="col d-flex align-items-center justify-content-md-center bg-light">R</th>
                                 <td className="col">
-                                    <Form.Control value={SpectaclePrescription.object.r_sphere}
-                                                  onChange={(obj) => SpectaclePrescription.edit('r_sphere', obj.target.value)}/>
+                                    <SelectAndSearch key="SpectaclePrescription"
+                                                     value={SpectaclePrescription.object.r_sphere}
+                                                     id="r_sphere"
+                                                     options={generateSelectValues(-30, 30, 0.13)}
+                                    />
+                                    {/* <Form.Control value={SpectaclePrescription.object.r_sphere}
+                                                  onChange={(obj) => SpectaclePrescription.edit('r_sphere', obj.target.value)}/>*/}
                                 </td>
                                 <td className="col">
-                                    <Form.Control value={SpectaclePrescription.object.r_cylinder}
-                                                  onChange={(obj) => SpectaclePrescription.edit('r_cylinder', obj.target.value)}/>
+                                    <SelectAndSearch key="SpectaclePrescription"
+                                                     value={SpectaclePrescription.object.r_cylinder}
+                                                     id="r_cylinder"
+                                                     options={generateSelectValues(-10, 10, 0.13)}
+                                    />
                                 </td>
                                 <td className="col">
-                                    <Form.Control value={SpectaclePrescription.object.r_axis}
-                                                  onChange={(obj) => SpectaclePrescription.edit('r_axis', obj.target.value)}/>
+                                    <SelectAndSearch key="SpectaclePrescription"
+                                                     value={SpectaclePrescription.object.r_axis}
+                                                     id="r_axis"
+                                                     options={generateSelectValues(0, 180, 1)}
+                                    />
+                                    {/*<Form.Control value={SpectaclePrescription.object.r_axis}
+                                                  onChange={(obj) => SpectaclePrescription.edit('r_axis', obj.target.value)}/>*/}
                                 </td>
                                 <td className="col">
                                     <Form.Control value={SpectaclePrescription.object.decentration_r}
                                                   onChange={(obj) => SpectaclePrescription.edit('decentration_r', obj.target.value)}/>
                                 </td>
                                 <td className="col">
-                                    <Form.Control value={SpectaclePrescription.object.r_prism_1}
-                                                  onChange={(obj) => SpectaclePrescription.edit('r_prism_1', obj.target.value)}/>
+                                    <SelectAndSearch key="SpectaclePrescription"
+                                                     value={SpectaclePrescription.object.r_prism_1}
+                                                     id="r_prism_1"
+                                                     options={generateSelectValues(0, 10, 0.25)}
+                                    />
+                                    {/*<Form.Control value={SpectaclePrescription.object.r_prism_1}
+                                                  onChange={(obj) => SpectaclePrescription.edit('r_prism_1', obj.target.value)}/>*/}
                                 </td>
                                 <td className="col">
-                                    <Form.Control value={SpectaclePrescription.object.r_base_1}
-                                                  onChange={(obj) => SpectaclePrescription.edit('r_base_1', obj.target.value)}/>
+                                    <SelectAndSearch key="SpectaclePrescription"
+                                                     value={SpectaclePrescription.object.r_base_1}
+                                                     id="r_base_1"
+                                                     options={["In","Out","Other"]}
+                                    />
+                                   {/* <Form.Control value={SpectaclePrescription.object.r_base_1}
+                                                  onChange={(obj) => SpectaclePrescription.edit('r_base_1', obj.target.value)}/>*/}
                                 </td>
                                 <td className="col">
-                                    <Form.Control value={SpectaclePrescription.object.r_prism_2}
-                                                  onChange={(obj) => SpectaclePrescription.edit('r_prism_2', obj.target.value)}/>
+                                    <SelectAndSearch key="SpectaclePrescription"
+                                                     value={SpectaclePrescription.object.r_prism_2}
+                                                     id="r_prism_2"
+                                                     options={generateSelectValues(0, 10, 0.25)}
+                                    />
+                                    {/*<Form.Control value={SpectaclePrescription.object.r_prism_2}
+                                                  onChange={(obj) => SpectaclePrescription.edit('r_prism_2', obj.target.value)}/>*/}
                                 </td>
                                 <td className="col">
-                                    <Form.Control value={SpectaclePrescription.object.r_base_2}
-                                                  onChange={(obj) => SpectaclePrescription.edit('r_base_2', obj.target.value)}/>
+                                    <SelectAndSearch key="SpectaclePrescription"
+                                                     value={SpectaclePrescription.object.r_base_2}
+                                                     id="r_base_2"
+                                                     options={["Up","Down","Other"]}
+                                    />
+                                   {/* <Form.Control value={SpectaclePrescription.object.r_base_2}
+                                                  onChange={(obj) => SpectaclePrescription.edit('r_base_2', obj.target.value)}/>*/}
                                 </td>
                             </tr>
                             <tr className="row">
                                 <th className="col d-flex align-items-center justify-content-md-center bg-light">L</th>
                                 <td className="col">
-                                    <Form.Control value={SpectaclePrescription.object.l_sphere}
-                                                  onChange={(obj) => SpectaclePrescription.edit('l_sphere', obj.target.value)}/>
+                                    <SelectAndSearch key="SpectaclePrescription"
+                                                     value={SpectaclePrescription.object.l_sphere}
+                                                     id="l_sphere"
+                                                     options={generateSelectValues(-30, 30, 0.13)}
+                                    />
+                                   {/* <Form.Control value={SpectaclePrescription.object.l_sphere}
+                                                  onChange={(obj) => SpectaclePrescription.edit('l_sphere', obj.target.value)}/>*/}
                                 </td>
                                 <td className="col">
-                                    <Form.Control value={SpectaclePrescription.object.l_cylinder}
-                                                  onChange={(obj) => SpectaclePrescription.edit('l_cylinder', obj.target.value)}/>
+                                    <SelectAndSearch key="SpectaclePrescription"
+                                                     value={SpectaclePrescription.object.l_cylinder}
+                                                     id="r_base_1"
+                                                     options={generateSelectValues(-10, 10, 0.13)}
+                                    />
+                                    {/*<Form.Control value={SpectaclePrescription.object.l_cylinder}
+                                                  onChange={(obj) => SpectaclePrescription.edit('l_cylinder', obj.target.value)}/>*/}
                                 </td>
                                 <td className="col">
-                                    <Form.Control value={SpectaclePrescription.object.l_axis}
-                                                  onChange={(obj) => SpectaclePrescription.edit('l_axis', obj.target.value)}/>
+                                    <SelectAndSearch key="SpectaclePrescription"
+                                                     value={SpectaclePrescription.object.l_axis}
+                                                     id="l_axis"
+                                                     options={generateSelectValues(0, 180, 1)}
+                                    />
+                                    {/*<Form.Control value={SpectaclePrescription.object.l_axis}
+                                                  onChange={(obj) => SpectaclePrescription.edit('l_axis', obj.target.value)}/>*/}
                                 </td>
                                 <td className="col">
                                     <Form.Control value={SpectaclePrescription.object.decentration_l}
                                                   onChange={(obj) => SpectaclePrescription.edit('decentration_l', obj.target.value)}/>
                                 </td>
                                 <td className="col">
-                                    <Form.Control value={SpectaclePrescription.object.l_prism_1}
-                                                  onChange={(obj) => SpectaclePrescription.edit('l_prism_1', obj.target.value)}/>
+                                    <SelectAndSearch key="SpectaclePrescription"
+                                                     value={SpectaclePrescription.object.l_prism_1}
+                                                     id="l_prism_1"
+                                                     options={generateSelectValues(0, 10, 0.25)}
+                                    />
+                                    {/*<Form.Control value={SpectaclePrescription.object.l_prism_1}
+                                                  onChange={(obj) => SpectaclePrescription.edit('l_prism_1', obj.target.value)}/>*/}
                                 </td>
                                 <td className="col">
-                                    <Form.Control value={SpectaclePrescription.object.l_base_1}
-                                                  onChange={(obj) => SpectaclePrescription.edit('l_base_1', obj.target.value)}/>
+                                    <SelectAndSearch key="SpectaclePrescription"
+                                                     value={SpectaclePrescription.object.l_base_1}
+                                                     id="l_base_1"
+                                                     options={["In","Out","Other"]}
+                                    />
+                                    {/*<Form.Control value={SpectaclePrescription.object.l_base_1}
+                                                  onChange={(obj) => SpectaclePrescription.edit('l_base_1', obj.target.value)}/>*/}
                                 </td>
                                 <td className="col">
-                                    <Form.Control value={SpectaclePrescription.object.l_prism_2}
-                                                  onChange={(obj) => SpectaclePrescription.edit('l_prism_2', obj.target.value)}/>
+                                    <SelectAndSearch key="SpectaclePrescription"
+                                                     value={SpectaclePrescription.object.l_prism_2}
+                                                     id="l_prism_2"
+                                                     options={generateSelectValues(0, 10, 0.25)}
+                                    />
+                                    {/*<Form.Control value={SpectaclePrescription.object.l_prism_2}
+                                                  onChange={(obj) => SpectaclePrescription.edit('l_prism_2', obj.target.value)}/>*/}
                                 </td>
                                 <td className="col">
-                                    <Form.Control value={SpectaclePrescription.object.l_base_2}
-                                                  onChange={(obj) => SpectaclePrescription.edit('l_base_2', obj.target.value)}/>
+                                    <SelectAndSearch key="SpectaclePrescription"
+                                                     value={SpectaclePrescription.object.l_base_2}
+                                                     id="l_base_2"
+                                                     options={["Up","Down","Other"]}
+                                    />
+                                    {/*<Form.Control value={SpectaclePrescription.object.l_base_2}
+                                                  onChange={(obj) => SpectaclePrescription.edit('l_base_2', obj.target.value)}/>*/}
                                 </td>
                             </tr>
                             <tr className="row">
-                                <th className="col d-flex align-items-center justify-content-md-center bg-light">Add R</th>
+                                <th className="col d-flex align-items-center justify-content-md-center bg-light">Add R
+                                </th>
                                 <td className="col">
-                                    <Form.Control value={SpectaclePrescription.object.r_add}
-                                                  onChange={(obj) => SpectaclePrescription.edit('r_add', obj.target.value)}/>
+                                    <SelectAndSearch key="SpectaclePrescription"
+                                                     value={SpectaclePrescription.object.r_add}
+                                                     id="r_add"
+                                                     options={generateSelectValues(0.75,4, 0.25)}
+                                    />
+                                   {/* <Form.Control value={SpectaclePrescription.object.r_add}
+                                                  onChange={(obj) => SpectaclePrescription.edit('r_add', obj.target.value)}/>*/}
                                 </td>
-                                <th className="col d-flex align-items-center justify-content-md-center bg-light">R Height</th>
-                                <th className="col d-flex align-items-center justify-content-md-center bg-light">L Height</th>
+                                <th className="col d-flex align-items-center justify-content-md-center bg-light">R
+                                    Height
+                                </th>
+                                <th className="col d-flex align-items-center justify-content-md-center bg-light">L
+                                    Height
+                                </th>
                                 <th className="col d-flex align-items-center justify-content-md-center bg-light">Inset</th>
-                                <th className="col d-flex align-items-center justify-content-md-center bg-light">Total Dec</th>
-                                <th className="col d-flex align-items-center justify-content-md-center bg-light">R PD</th>
-                                <th className="col d-flex align-items-center justify-content-md-center bg-light">L PD</th>
+                                <th className="col d-flex align-items-center justify-content-md-center bg-light">Total
+                                    Dec
+                                </th>
+                                <th className="col d-flex align-items-center justify-content-md-center bg-light">R PD
+                                </th>
+                                <th className="col d-flex align-items-center justify-content-md-center bg-light">L PD
+                                </th>
                                 <td className="col"></td>
                             </tr>
                             <tr className="row">
-                                <th className="col d-flex align-items-center justify-content-md-center bg-light">Add L</th>
+                                <th className="col d-flex align-items-center justify-content-md-center bg-light">Add L
+                                </th>
                                 <td className="col">
-                                    <Form.Control value={SpectaclePrescription.object.l_add}
-                                                  onChange={(obj) => SpectaclePrescription.edit('l_add', obj.target.value)}/>
+                                    <SelectAndSearch key="SpectaclePrescription"
+                                                     value={SpectaclePrescription.object.l_add}
+                                                     id="l_add"
+                                                     options={generateSelectValues(0.75,4, 0.25)}
+                                    />
+                                    {/*<Form.Control value={SpectaclePrescription.object.l_add}*/}
+                                    {/*              onChange={(obj) => SpectaclePrescription.edit('l_add', obj.target.value)}/>*/}
                                 </td>
                                 <td className="col">
-                                    <Form.Control value={SpectaclePrescription.object.r_height}
-                                                  onChange={(obj) => SpectaclePrescription.edit('r_height', obj.target.value)}/>
+                                    <SelectAndSearch key="SpectaclePrescription"
+                                                     value={SpectaclePrescription.object.r_height}
+                                                     id="r_height"
+                                                     options={generateSelectValues(0,40.5, 0.5)}
+                                    />
+                                    {/*<Form.Control value={SpectaclePrescription.object.r_height}*/}
+                                    {/*              onChange={(obj) => SpectaclePrescription.edit('r_height', obj.target.value)}/>*/}
                                 </td>
                                 <td className="col">
-                                    <Form.Control value={SpectaclePrescription.object.l_height}
-                                                  onChange={(obj) => SpectaclePrescription.edit('l_height', obj.target.value)}/>
+                                    <SelectAndSearch key="SpectaclePrescription"
+                                                     value={SpectaclePrescription.object.l_height}
+                                                     id="l_height"
+                                                     options={generateSelectValues(0,40.5, 0.5)}
+                                    />
+                                    {/*<Form.Control value={SpectaclePrescription.object.l_height}*/}
+                                    {/*              onChange={(obj) => SpectaclePrescription.edit('l_height', obj.target.value)}/>*/}
                                 </td>
                                 <td className="col">
                                     <Form.Control value={SpectaclePrescription.object.inset}
@@ -251,12 +357,22 @@ const SpectaclePrescriptionForm = observer(({read = false}) => {
                                                   onChange={(obj) => SpectaclePrescription.edit('total_dec', obj.target.value)}/>
                                 </td>
                                 <td className="col">
-                                    <Form.Control value={SpectaclePrescription.object.r_pd}
-                                                  onChange={(obj) => SpectaclePrescription.edit('r_pd', obj.target.value)}/>
+                                    <SelectAndSearch key="SpectaclePrescription"
+                                                     value={SpectaclePrescription.object.r_pd}
+                                                     id="r_pd"
+                                                     options={generateSelectValues(15,40.5, 0.5)}
+                                    />
+                                    {/*<Form.Control value={SpectaclePrescription.object.r_pd}*/}
+                                    {/*              onChange={(obj) => SpectaclePrescription.edit('r_pd', obj.target.value)}/>*/}
                                 </td>
                                 <td className="col">
-                                    <Form.Control value={SpectaclePrescription.object.l_pd}
-                                                  onChange={(obj) => SpectaclePrescription.edit('l_pd', obj.target.value)}/>
+                                    <SelectAndSearch key="SpectaclePrescription"
+                                                     value={SpectaclePrescription.object.l_pd}
+                                                     id="l_pd"
+                                                     options={generateSelectValues(15,40.5, 0.5)}
+                                    />
+                                    {/*<Form.Control value={SpectaclePrescription.object.l_pd}*/}
+                                    {/*              onChange={(obj) => SpectaclePrescription.edit('l_pd', obj.target.value)}/>*/}
                                 </td>
                                 <td className="col"></td>
                             </tr>

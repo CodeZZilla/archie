@@ -58,3 +58,7 @@
 .my-table{
   border-radius: 10px;
 }
+
+.borderless td, .borderless th {
+  border: none;
+}

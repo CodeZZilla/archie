@@ -6,7 +6,7 @@ import {FaBeer} from "react-icons/all";
 import UserAdd from "./UserAdd";
 import InputFormCompany from "./Inputs/InputFormCompany";
 import {observer} from "mobx-react-lite";
-import Company from "../Store/Company";
+import CompanyStore from "../Store/Company";
 import ShowUsersLocation from "./ShowUsersLocation";
 
 
@@ -26,26 +26,26 @@ const CompanyAdd = observer(() => {
         let onFormSubmit = async (e) => {
             setBtnSpinnerShow(true)
             e.preventDefault()
-            if (Company.object.email !== '') {
+            if (CompanyStore.object.email !== '') {
                 try {
                     let loadRelationsQueryBuilder = Backendless.LoadRelationsQueryBuilder.create();
                     loadRelationsQueryBuilder.setRelationName("users_role");
-                    let saveCompany = await Backendless.Data.of("Company").save(Company.object)
-                    if (Company.adminCompany.email !== '' && Company.adminCompany.objectIdRole !== 'null') {
-                        let userAdminCompany = await Backendless.UserService.register(Company.getAdminCompanyDb())
+                    let saveCompany = await Backendless.Data.of("CompanyStore").save(CompanyStore.object)
+                    if (CompanyStore.adminCompany.email !== '' && CompanyStore.adminCompany.objectIdRole !== 'null') {
+                        let userAdminCompany = await Backendless.UserService.register(CompanyStore.getAdminCompanyDb())
 
                         //получение обьектов связи и перезапись их
-                        let arrUsersAdminsCompany = await Backendless.Data.of('Roles').loadRelations({objectId: Company.adminCompany.objectIdRole}, loadRelationsQueryBuilder)
-                        await Backendless.Data.of("Roles").setRelation({objectId: Company.adminCompany.objectIdRole},
+                        let arrUsersAdminsCompany = await Backendless.Data.of('Roles').loadRelations({objectId: CompanyStore.adminCompany.objectIdRole}, loadRelationsQueryBuilder)
+                        await Backendless.Data.of("Roles").setRelation({objectId: CompanyStore.adminCompany.objectIdRole},
                             "users_role", [...arrUsersAdminsCompany, {objectId: userAdminCompany.objectId}])
 
                         //admin company запись в компани его
-                        await Backendless.Data.of("Company").setRelation({objectId: saveCompany.objectId},
+                        await Backendless.Data.of("CompanyStore").setRelation({objectId: saveCompany.objectId},
                             'owner_company', [{objectId: userAdminCompany.objectId}])
                     }
                     //добавление локаций в бд
-                    if (Company.listLocation.length !== 0) {
-                        for await (let location of Company.listLocation) {
+                    if (CompanyStore.listLocation.length !== 0) {
+                        for await (let location of CompanyStore.listLocation) {
                             let saveLocationObject = {
                                 name_location: location.name_location,
                                 city_town: location.city_town,
@@ -63,7 +63,7 @@ const CompanyAdd = observer(() => {
                             // 1 к многому через дополнительную таблицу (к таблице Коспани)
                             let relation = await Backendless.Data.of("CompanyLocation").save({})
                             await Backendless.Data.of("CompanyLocation").setRelation(relation.objectId, "Location", [saveLocation.objectId])
-                            await Backendless.Data.of("CompanyLocation").setRelation(relation.objectId, "Company", [saveCompany.objectId])
+                            await Backendless.Data.of("CompanyLocation").setRelation(relation.objectId, "CompanyStore", [saveCompany.objectId])
 
                             //admin location запись в location его если есть
                             if (location.userAdmin.password !== undefined) {
@@ -128,8 +128,7 @@ const CompanyAdd = observer(() => {
                             }
                         }
                     }
-
-                    Company.resetCompany()
+                    CompanyStore.resetCompany()
                 } catch (ex) {
                     alert(ex.message)
                 }
@@ -162,7 +161,7 @@ const CompanyAdd = observer(() => {
                         </Row>
                         <Row className="mt-3">
                             <Col className="col-lg-5 col-md-12">
-                                <InputFormCompany value={Company.object.name_company} id="name_company"
+                                <InputFormCompany value={CompanyStore.object.name_company} id="name_company"
                                                   title="Company name"/>
                                 <Row className="mt-3">
                                     <Form.Label className="col-4">
@@ -170,7 +169,7 @@ const CompanyAdd = observer(() => {
                                     </Form.Label>
                                     <Col>
                                         <Form.Select className="me-sm-2"
-                                                     onChange={(obj) => Company.edit('warehouse', Boolean(obj.target.value))}>
+                                                     onChange={(obj) => CompanyStore.edit('warehouse', Boolean(obj.target.value))}>
                                             <option value={false}>False</option>
                                             <option value={true}>True</option>
                                         </Form.Select>
@@ -184,9 +183,9 @@ const CompanyAdd = observer(() => {
                                     </Form.Label>
 
                                     <Col className="d-flex">
-                                        <p>{Company.adminCompany.objectIdRole === 'null' ?
+                                        <p>{CompanyStore.adminCompany.objectIdRole === 'null' ?
                                             'No Admin' :
-                                            Company.adminCompany.last_name + ' ' + Company.adminCompany.first_name}</p>
+                                            CompanyStore.adminCompany.last_name + ' ' + CompanyStore.adminCompany.first_name}</p>
                                     </Col>
 
                                     {/* modal add admin company user*/}
@@ -209,20 +208,20 @@ const CompanyAdd = observer(() => {
                                     </Modal>
 
                                 </Row>
-                                <InputFormCompany value={Company.object.main_contact} id="main_contact"
+                                <InputFormCompany value={CompanyStore.object.main_contact} id="main_contact"
                                                   title="Main contact"/>
-                                <InputFormCompany value={Company.object.street_address} id="street_address"
+                                <InputFormCompany value={CompanyStore.object.street_address} id="street_address"
                                                   title="Street address"/>
-                                <InputFormCompany value={Company.object.street_address_extra} id="street_address_extra"
+                                <InputFormCompany value={CompanyStore.object.street_address_extra} id="street_address_extra"
                                                   title="Street address (extra)"/>
-                                <InputFormCompany value={Company.object.city_town} id="city_town" title="City/Town"/>
-                                <InputFormCompany value={Company.object.state_province} id="state_province"
+                                <InputFormCompany value={CompanyStore.object.city_town} id="city_town" title="City/Town"/>
+                                <InputFormCompany value={CompanyStore.object.state_province} id="state_province"
                                                   title="State/Province"/>
-                                <InputFormCompany value={Company.object.zip_code} id="zip_code" title="Zip Code"/>
-                                <InputFormCompany value={Company.object.phone} id="phone" title="Phone"/>
-                                <InputFormCompany value={Company.object.email} id="email" title="Email Address"/>
-                                <InputFormCompany value={Company.object.tax_id} id="tax_id" title="Tax Id"/>
-                                <InputFormCompany value={Company.object.website_company} id="website_company"
+                                <InputFormCompany value={CompanyStore.object.zip_code} id="zip_code" title="Zip Code"/>
+                                <InputFormCompany value={CompanyStore.object.phone} id="phone" title="Phone"/>
+                                <InputFormCompany value={CompanyStore.object.email} id="email" title="Email Address"/>
+                                <InputFormCompany value={CompanyStore.object.tax_id} id="tax_id" title="Tax Id"/>
+                                <InputFormCompany value={CompanyStore.object.website_company} id="website_company"
                                                   title="Website"/>
                             </Col>
                             <Col className="mt-3">
@@ -342,9 +341,9 @@ const CompanyAdd = observer(() => {
                                                 <th>Action</th>
                                             </tr>
                                             </thead>
-                                            {Company.listLocation.length > 0 ?
+                                            {CompanyStore.listLocation.length > 0 ?
                                                 <tbody>
-                                                {Company.listLocation.length > 0 ? Company.listLocation.map((value, index) =>
+                                                {CompanyStore.listLocation.length > 0 ? CompanyStore.listLocation.map((value, index) =>
                                                     <tr key={index}>
                                                         <td>{index + 1}</td>
                                                         <td>{value.name_location}</td>
@@ -377,13 +376,13 @@ const CompanyAdd = observer(() => {
                                                                     </Dropdown.Item>
                                                                     <Dropdown.Item onClick={() => {
                                                                         setLocationIndexEdit(index)
-                                                                        setLocationEdit(Company.getLocation(index))
+                                                                        setLocationEdit(CompanyStore.getLocation(index))
                                                                         setShowEditLocation(true)
                                                                     }}>
                                                                         Edit location
                                                                     </Dropdown.Item>
                                                                     <Dropdown.Item
-                                                                        onClick={() => Company.removeListLocationItem(index)}>
+                                                                        onClick={() => CompanyStore.removeListLocationItem(index)}>
                                                                         Remove location
                                                                     </Dropdown.Item>
                                                                 </Dropdown.Menu>

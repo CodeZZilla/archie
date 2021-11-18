@@ -3,7 +3,8 @@ import React, {useEffect, useState} from "react";
 import {Button, Col, Container, Form, Row, Spinner, Table} from "react-bootstrap";
 import ContactLensPrescription from "../Store/ContactLensPrescription";
 import Backendless from "backendless";
-import {useParams} from "react-router-dom/cjs/react-router-dom";
+import {saveObject, getAllObject, getAllObjectByRelationField} from "../Business/BackendlessRequest"
+import {useParams} from "react-router-dom";
 
 
 const ContactLensPrescriptionForm = observer(({read = false}) => {
@@ -20,15 +21,14 @@ const ContactLensPrescriptionForm = observer(({read = false}) => {
             let spectaclePrescription = await Backendless.Data.of('ContactLensPrescription').findById(id)
             ContactLensPrescription.create(spectaclePrescription)
         }
-        let loadRelationsQueryBuilder = Backendless.LoadRelationsQueryBuilder.create();
-        loadRelationsQueryBuilder.setRelationName("users_role");
+
         // Optician
-        let arrOpticians = await Backendless.Data.of('Roles').loadRelations({objectId: "0243FCB6-D04E-4F3D-AD5F-3FDA300A58C0"}, loadRelationsQueryBuilder)
+        let arrOpticians = await getAllObjectByRelationField('users_role', 'Roles', {objectId: "0243FCB6-D04E-4F3D-AD5F-3FDA300A58C0"})
         // Optometrist
-        let arrOptometrists = await Backendless.Data.of('Roles').loadRelations({objectId: "1DE37DEA-91E2-4502-B24B-A593D0E8AA68"}, loadRelationsQueryBuilder)
+        let arrOptometrists = await getAllObjectByRelationField('users_role', 'Roles', {objectId: "1DE37DEA-91E2-4502-B24B-A593D0E8AA68"})
         setDoctors([...arrOpticians, ...arrOptometrists])
 
-        let clientsAll = await Backendless.Data.of('Client').find({})
+        let clientsAll = await getAllObject('Client')
         setClients(clientsAll)
         setIsLoading(false)
     }, [])
@@ -36,7 +36,7 @@ const ContactLensPrescriptionForm = observer(({read = false}) => {
     let save = async (e) => {
         setBtnSpinnerShow(true)
         e.preventDefault()
-        await Backendless.Data.of("ContactLensPrescription").save(ContactLensPrescription.object)
+        await saveObject("ContactLensPrescription", ContactLensPrescription.object)
         ContactLensPrescription.reset()
         setBtnSpinnerShow(false)
     }
@@ -293,7 +293,8 @@ const ContactLensPrescriptionForm = observer(({read = false}) => {
                                         <th className="col d-flex align-items-center justify-content-md-center bg-light">
                                             Contact Lens Color
                                         </th>
-                                        <th className="col d-flex align-items-center justify-content-md-center bg-light" colSpan={2}>
+                                        <th className="col d-flex align-items-center justify-content-md-center bg-light"
+                                            colSpan={2}>
                                             Contact Lens Modality
                                         </th>
                                         <th className="col d-flex align-items-center justify-content-md-center bg-light">
@@ -321,7 +322,7 @@ const ContactLensPrescriptionForm = observer(({read = false}) => {
                     </div>
                 </Container>
             </div>
-)
+    )
 })
 
 

@@ -1,67 +1,87 @@
 import React from "react";
-import {Container, Nav, Navbar, NavDropdown} from "react-bootstrap";
-import {NavLink} from "react-router-dom";
-import SpectaclePrescription from "../Store/SpectaclePrescription";
-import ContactLensPrescription from "../Store/ContactLensPrescription";
+import {Button, Container, Nav, Navbar, NavDropdown} from "react-bootstrap";
+import {LinkContainer} from 'react-router-bootstrap'
+import AuthStore from "../Store/AuthStore";
 
 
-const Header = () => {
-    return(
-        <Navbar bg="light" expand="lg">
-        <Container>
-            <Navbar.Brand href="/home">Archie OS</Navbar.Brand>
-            <Navbar.Toggle aria-controls="basic-navbar-nav"/>
-            <Navbar.Collapse id="basic-navbar-nav">
-                <Nav className="me-auto">
-                    <NavLink className="my-link h5 text-secondary m-3" to="/home">
-                        Home
-                    </NavLink>
-                    <NavDropdown className="my-link h5 text-secondary mt-2" title="Company" id="basic-nav-dropdown">
-                        <NavLink className="my-link h5 text-secondary m-3" to="/company-add">
-                            Add
-                        </NavLink>
-                        <NavDropdown.Divider/>
-                        <NavLink className="my-link h5 text-secondary m-3" to="/company-list">
-                            List
-                        </NavLink>
-                        <NavDropdown.Divider/>
-                        <NavLink className="my-link h5 text-secondary m-3" to="/home">
-                            Help
-                        </NavLink>
-                    </NavDropdown>
-                    <NavLink className="my-link h5 text-secondary m-3" to="/patients-super-user">
-                        Clients/Patients
-                    </NavLink>
-                    <NavDropdown className="my-link h5 text-secondary mt-2" title="Spectacle Prescription" id="basic-nav-dropdown">
-                        <NavLink className="my-link h5 text-secondary m-3" to="/spectacle-prescription">
-                            Add
-                        </NavLink>
-                        <NavDropdown.Divider/>
-                        <NavLink className="my-link h5 text-secondary m-3" to="/spectacle-prescription-table">
-                            List
-                        </NavLink>
-                        <NavDropdown.Divider/>
-                        <NavLink className="my-link h5 text-secondary m-3" to="/home">
-                            Help
-                        </NavLink>
-                    </NavDropdown>
-                    <NavDropdown className="my-link h5 text-secondary mt-2" title="Contact Lens Prescription" id="basic-nav-dropdown">
-                        <NavLink className="my-link h5 text-secondary m-3" to="/contact-lens-prescription">
-                            Add
-                        </NavLink>
-                        <NavDropdown.Divider/>
-                        <NavLink className="my-link h5 text-secondary m-3" to="/contact-lens-prescription-table">
-                            List
-                        </NavLink>
-                        <NavDropdown.Divider/>
-                        <NavLink className="my-link h5 text-secondary m-3" to="/home">
-                            Help
-                        </NavLink>
-                    </NavDropdown>
-                </Nav>
-            </Navbar.Collapse>
-        </Container>
-    </Navbar>
+const Header = ({role}) => {
+    return (
+        role === "SuperAdmin" ?
+            <Navbar bg="light" expand="lg">
+                <Container>
+                    <Navbar.Brand href="/home">Archie OS</Navbar.Brand>
+                    <Navbar.Toggle aria-controls="basic-navbar-nav"/>
+                    <Navbar.Collapse id="basic-navbar-nav">
+                        <Nav className="me-auto">
+                            <LinkContainer to="/home">
+                                <Nav.Link>Home</Nav.Link>
+                            </LinkContainer>
+                            <NavDropdown title="Company" id="company-dropdown">
+                                <LinkContainer to="/company-add">
+                                    <NavDropdown.Item>Add</NavDropdown.Item>
+                                </LinkContainer>
+                                <LinkContainer to="/company-list">
+                                    <NavDropdown.Item>List</NavDropdown.Item>
+                                </LinkContainer>
+                                <NavDropdown.Divider/>
+                                <NavDropdown.Item>Help</NavDropdown.Item>
+                            </NavDropdown>
+                        </Nav>
+                    </Navbar.Collapse>
+                    <div className="w-auto">
+                        <Button className="float-right" type="button"
+                                variant="outline-danger" onClick={() => AuthStore.logout()}>
+                            Logout
+                        </Button>
+                    </div>
+                </Container>
+            </Navbar> :
+            role === "UserLocation" ?
+                <Navbar bg="light" expand="lg">
+                    <Container>
+                        <Navbar.Brand href="/home">Archie OS</Navbar.Brand>
+                        <Navbar.Toggle aria-controls="basic-navbar-nav"/>
+                        <Navbar.Collapse id="basic-navbar-nav">
+                            <Nav className="me-auto">
+                                <LinkContainer to="/home">
+                                    <Nav.Link>Home</Nav.Link>
+                                </LinkContainer>
+                                <NavDropdown title="Orders" id="prescription-dropdown">
+                                    <LinkContainer to="/order-add">
+                                        <NavDropdown.Item>Create new order</NavDropdown.Item>
+                                    </LinkContainer>
+                                </NavDropdown>
+                                <LinkContainer to="/patients-super-user">
+                                    <Nav.Link>Patients</Nav.Link>
+                                </LinkContainer>
+                                <NavDropdown title="Prescription" id="prescription-dropdown">
+                                    <NavDropdown.Header>Spectacle</NavDropdown.Header>
+                                    <LinkContainer to="/spectacle-prescription">
+                                        <NavDropdown.Item>Add</NavDropdown.Item>
+                                    </LinkContainer>
+                                    <LinkContainer to="/spectacle-prescription-table">
+                                        <NavDropdown.Item>List</NavDropdown.Item>
+                                    </LinkContainer>
+                                    <NavDropdown.Divider/>
+                                    <NavDropdown.Header>Contact Lens</NavDropdown.Header>
+                                    <LinkContainer to="/contact-lens-prescription">
+                                        <NavDropdown.Item>Add</NavDropdown.Item>
+                                    </LinkContainer>
+                                    <LinkContainer to="/contact-lens-prescription-table">
+                                        <NavDropdown.Item>List</NavDropdown.Item>
+                                    </LinkContainer>
+                                </NavDropdown>
+                            </Nav>
+                        </Navbar.Collapse>
+                        <div className="w-auto">
+                            <Button className="float-right" type="button"
+                                    variant="outline-danger" onClick={() => AuthStore.logout()}>
+                                Logout
+                            </Button>
+                        </div>
+                    </Container>
+                </Navbar> :
+                null
     )
 }
 

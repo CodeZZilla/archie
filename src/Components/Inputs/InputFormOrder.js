@@ -1,22 +1,23 @@
-import {Form} from "react-bootstrap";
+import {Button, Form} from "react-bootstrap";
 import React, {useState} from "react";
 import {observer} from "mobx-react-lite";
-import Patient from "../../Store/Patient";
+import Order from "../../Store/Order";
 
 
-const InputFormPatient = observer(({value, id, title}) => {
+const InputFormOrder = observer(({value, id, title}) => {
         const [isInvalid, setIsInvalid] = useState(false)
         const [valueMiddle, setValueMiddle] = useState('')
 
         return (
             <Form.Group className="mb-3" controlId={id}>
                 <Form.Label>{title}</Form.Label>
+                <div className="d-flex">
                 {id === 'email' ?
                     <Form.Control type="email" placeholder={title} value={valueMiddle} isInvalid={isInvalid}
                                   onChange={(obj) => setValueMiddle(obj.target.value)}
                                   onBlur={(obj) => {
                                       if (/.+@.+\.[A-Za-z]+$/.test(obj.target.value)) {
-                                          Patient.edit(id, valueMiddle)
+                                          Order.edit(id, valueMiddle)
                                           setIsInvalid(false)
                                       } else {
                                           setIsInvalid(true)
@@ -25,19 +26,20 @@ const InputFormPatient = observer(({value, id, title}) => {
                     />
                     : id === 'password' ?
                         <Form.Control type="password" placeholder={title} value={value}
-                                      onChange={(obj) => Patient.edit(id, obj.target.value)}/>
+                                      onChange={(obj) => Order.edit(id, obj.target.value)}/>
                         : <Form.Control type="text" placeholder={title}  value={value}
                                         onChange={(obj) => {
-                                            Patient.edit(id, obj.target.value)
+                                            Order.edit(id, obj.target.value)
                                         }}/>
                 }
+                <Button variant="outline-primary">Add</Button>
                 <Form.Control.Feedback type="invalid">
                     Please choose a {title}.
                 </Form.Control.Feedback>
+                </div>
             </Form.Group>
-
         )
     }
 )
 
-export default InputFormPatient
+export default InputFormOrder

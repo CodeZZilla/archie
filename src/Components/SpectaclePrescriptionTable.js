@@ -2,6 +2,8 @@ import React, {useState, useEffect} from 'react';
 import {Col, Container, Row, Spinner, Table} from "react-bootstrap";
 import {NavLink} from "react-router-dom";
 import Backendless from "backendless";
+import Loader from "./Loader";
+import loader from "../assets/images/eye.gif";
 
 
 export default function SpectaclePrescriptionTable() {
@@ -10,29 +12,28 @@ export default function SpectaclePrescriptionTable() {
 
 
     useEffect(async () => {
-        let data = await Backendless.Data.of('SpectaclePrescription').find({})
-        for await (let item of data) {
-            let clientObject = await Backendless.Data.of('Client').findById(item.client)
-            let doctorObject = await Backendless.Data.of('Users').findById(item.doctor)
-            item.client = clientObject
-            item.doctor = doctorObject
+        let inputData = await Backendless.Data.of('SpectaclePrescription').find({})
+        let outputData = []
+        for await (let item of inputData) {
+            try {
+                let clientObject = await Backendless.Data.of('Client').findById(item.client)
+                let doctorObject = await Backendless.Data.of('Users').findById(item.doctor)
+                item.client = clientObject
+                item.doctor = doctorObject
+            }catch (error){
+                await Backendless.Data.of( "SpectaclePrescription" ).remove(item)
+                continue
+            }finally {
+                outputData.push(item)
+            }
         }
-        setMyData(data)
+        setMyData(outputData)
         setIsLoading(false)
     })
 
     return (
         isLoading ?
-            <div>
-                <h1>All Spectacle Prescriptions</h1>
-                <Container className="mt-3 mb-3">
-                    <Row className="justify-content-md-center">
-                        <Spinner className="my-load-spinner" animation="border" variant="secondary" role="status">
-                            <span className="visually-hidden">Loading...</span>
-                        </Spinner>
-                    </Row>
-                </Container>
-            </div> :
+            <img src={loader} height={70}/> :
             <div>
                 <h1>All Spectacle Prescriptions</h1>
                 <Container className="mt-3 mb-3">
