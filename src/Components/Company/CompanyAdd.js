@@ -177,7 +177,7 @@ const CompanyAdd = observer(() => {
                                 <Row className="mt-4">
                                     <Form.Label className="col-4">
                                         <Button variant="primary" onClick={() => setShowOwnerModal(true)}>
-                                            Set Admin
+                                            Set Admіn
                                         </Button>
                                     </Form.Label>
 
