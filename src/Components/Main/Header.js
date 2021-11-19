@@ -26,6 +26,16 @@ const Header = ({role}) => {
                                 <NavDropdown.Divider/>
                                 <NavDropdown.Item>Help</NavDropdown.Item>
                             </NavDropdown>
+                            <NavDropdown title="Location" id="location-dropdown">
+                                <LinkContainer to="/location-add">
+                                    <NavDropdown.Item>Add</NavDropdown.Item>
+                                </LinkContainer>
+                                <LinkContainer to="/location-list">
+                                    <NavDropdown.Item>List</NavDropdown.Item>
+                                </LinkContainer>
+                                <NavDropdown.Divider/>
+                                <NavDropdown.Item>Help</NavDropdown.Item>
+                            </NavDropdown>
                         </Nav>
                     </Navbar.Collapse>
                     <div className="w-auto">

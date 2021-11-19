@@ -12,6 +12,10 @@ import ContactLensPrescriptionForm from "./Components/Prescriptions/ContactLensP
 import ContactLensPrescriptionTable from "./Components/Prescriptions/ContactLensPrescriptionTable";
 import UserProfile from "./Components/User/UserProfile";
 import OrderAdd from "./Components/Order/OrderAdd";
+import LocationAddEdit from "./Components/Location/LocationAddEdit";
+import LocationList from "./Components/Location/LocationList";
+import CompanyItem from "./Components/Company/CompanyItem";
+
 
 export const useRoutes = (userType) => {
     switch (userType) {
@@ -30,7 +34,13 @@ export const useRoutes = (userType) => {
                             <CompanyList/>
                         </Route>
                         <Route path='/company-item/:id'>
-                            <CompanyAdd/>
+                            <CompanyItem/>
+                        </Route>
+                        <Route path='/location-add'>
+                            <LocationAddEdit/>
+                        </Route>
+                        <Route path='/location-list'>
+                            <LocationList/>
                         </Route>
                         <Route path='/user/:id'>
                             <UserProfile/>
