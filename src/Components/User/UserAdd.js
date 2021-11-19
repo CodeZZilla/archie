@@ -1,8 +1,8 @@
 import {Col, Row, Button, Container, Form, Spinner} from "react-bootstrap";
 import React, {useEffect, useState} from "react";
-import Company from "../Store/Company";
-import User from "../Store/User";
-import InputFormUser from "./Inputs/InputFormUser";
+import Company from "../../Store/Company";
+import User from "../../Store/User";
+import InputForm from "../Inputs/InputForm";
 import Backendless from "backendless";
 import {observer} from "mobx-react-lite";
 
@@ -98,9 +98,9 @@ const UserAdd = observer(({fun, addStatus, indexLocation}) => {
                             </Row>
                             <Row className="mt-3 mb-5 justify-content-md-center">
                                 <Col className="col-11">
-                                    <InputFormUser value={User.object.first_name} id="first_name"
-                                                   title="First Name"/>
-                                    <InputFormUser value={User.object.last_name} id="last_name" title="Last Name"/>
+                                    <InputForm value={User.object.first_name} id="first_name"
+                                                   title="First Name" myKey="User"/>
+                                    <InputForm value={User.object.last_name} id="last_name" title="Last Name" myKey="User"/>
                                     <Row className="mt-3">
                                         <Form.Label className="col-4">
                                             Role
@@ -116,15 +116,15 @@ const UserAdd = observer(({fun, addStatus, indexLocation}) => {
                                             </Form.Select>
                                         </Col>
                                     </Row>
-                                    <InputFormUser value={User.object.email} id="email" title="Email"/>
-                                    <InputFormUser value={User.object.phone} id="phone" title="Phone (optional)"/>
-                                    <InputFormUser value={User.object.street} id="street"
-                                                   title="Street (optional)"/>
-                                    <InputFormUser value={User.object.city} id="city" title="City"/>
-                                    <InputFormUser value={User.object.state} id="state" title="State"/>
-                                    <InputFormUser value={User.object.zip} id="zip" title="Zip Code"/>
-                                    <InputFormUser value={User.object.login} id="login" title="Login"/>
-                                    <InputFormUser value={User.object.password} id="password" title="Password"/>
+                                    <InputForm value={User.object.email} id="email" title="Email" myKey="User"/>
+                                    <InputForm value={User.object.phone} id="phone" title="Phone (optional)" myKey="User"/>
+                                    <InputForm value={User.object.street} id="street"
+                                                   title="Street (optional)" myKey="User"/>
+                                    <InputForm value={User.object.city} id="city" title="City" myKey="User"/>
+                                    <InputForm value={User.object.state} id="state" title="State" myKey="User"/>
+                                    <InputForm value={User.object.zip} id="zip" title="Zip Code" myKey="User"/>
+                                    <InputForm value={User.object.login} id="login" title="Login" myKey="User"/>
+                                    <InputForm value={User.object.password} id="password" title="Password" myKey="User"/>
                                 </Col>
                             </Row>
                         </Container>

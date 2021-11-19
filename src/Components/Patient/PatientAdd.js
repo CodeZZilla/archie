@@ -2,14 +2,15 @@ import {observer} from "mobx-react-lite";
 import React, {useEffect, useState} from "react";
 import Select from 'react-select'
 import {Button, Col, Container, Form, Row, Spinner} from "react-bootstrap";
-import InputFormPatient from "./Inputs/InputFormPatient";
-import Patient from "../Store/Patient";
+import InputFormPatient from "../Inputs/InputFormPatient";
+import Patient from "../../Store/Patient";
 import Backendless from "backendless";
-import FileUpload from "./Inputs/FileUpload";
-import FilesClientAdd from "../Store/FilesClientAdd";
-import CustomAlert from "./Alerts/CustomAlert";
-import AlertStatus from "../Store/AlertStatus";
-import Loader from "./Loader";
+import InputForm from "../Inputs/InputForm"
+import FileUpload from "../Inputs/FileUpload";
+import FilesClientAdd from "../../Store/FilesClientAdd";
+import CustomAlert from "../Alerts/CustomAlert";
+import AlertStatus from "../../Store/AlertStatus";
+import Loader from "../Main/Loader";
 
 
 const PatientAdd = observer(({title, btnText, patient, indexPatient, fun}) => {
@@ -54,7 +55,7 @@ const PatientAdd = observer(({title, btnText, patient, indexPatient, fun}) => {
     return (
         isLoading ?
             <div>
-                <h1>Add Patient</h1>
+                <h1>Add PatientStore</h1>
                 <Container className="mt-3 mb-3">
                     <Row className="justify-content-md-center">
                         <Spinner className="my-load-spinner" animation="border" variant="secondary" role="status">
@@ -72,7 +73,7 @@ const PatientAdd = observer(({title, btnText, patient, indexPatient, fun}) => {
                     </Row>
                     <Row>
                         <Col className="d-flex justify-content-between">
-                            <h1 className="text-center">Add Patient</h1>
+                            <h1 className="text-center">Add PatientStore</h1>
                             <Button className="d-flex justify-content-around" disabled={btnSpinnerShow} type="button" variant="success"
                                     onClick={save} size="lg">
                                 {btnSpinnerShow ?
@@ -90,20 +91,20 @@ const PatientAdd = observer(({title, btnText, patient, indexPatient, fun}) => {
                     <div className="border border-secondary p-md-4 mt-4 ">
                         <Row className="justify-content-md-center">
                             <Col>
-                                <InputFormPatient value={Patient.object.last_name} id="last_name" title="Last name"/>
+                                <InputForm value={Patient.object.last_name} id="last_name" title="Last name" myKey="Patient"/>
                             </Col>
                             <Col>
-                                <InputFormPatient value={Patient.object.first_name} id="first_name" title="First name"/>
+                                <InputForm value={Patient.object.first_name} id="first_name" title="First name" myKey="Patient"/>
                             </Col>
                             <Col>
-                                <InputFormPatient value={Patient.object.middle_name} id="middle_name"
-                                                  title="Middle name"/>
+                                <InputForm value={Patient.object.middle_name} id="middle_name"
+                                                  title="Middle name" myKey="Patient"/>
                             </Col>
                             <Col>
-                                <InputFormPatient value={Patient.object.title} id="title" title="Title"/>
+                                <InputForm value={Patient.object.title} id="title" title="Title" myKey="Patient"/>
                             </Col>
                             <Col>
-                                <InputFormPatient value={Patient.object.suffix} id="suffix" title="Suffix"/>
+                                <InputForm value={Patient.object.suffix} id="suffix" title="Suffix" myKey="Patient"/>
                             </Col>
                             <Col>
                                 <Form.Group className="mb-3">

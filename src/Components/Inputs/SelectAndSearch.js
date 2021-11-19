@@ -12,7 +12,6 @@ const SelectAndSearch = observer(({value, id, options, key}) => {
     }, [])
 
     return (
-
         <Typeahead
             labelKey="name"
             onChange={(obj) => {

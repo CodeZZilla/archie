@@ -8,7 +8,6 @@ const InputFormCompany = observer(({value, id, title}) => {
         const [isInvalid, setIsInvalid] = useState(false)
         const [valueMiddle, setValueMiddle] = useState('')
 
-
         return (
             <Row className="mt-3">
                 <Form.Label className="col-4">

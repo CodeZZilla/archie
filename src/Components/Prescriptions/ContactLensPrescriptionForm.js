@@ -1,9 +1,9 @@
 import {observer} from "mobx-react-lite";
 import React, {useEffect, useState} from "react";
 import {Button, Col, Container, Form, Row, Spinner, Table} from "react-bootstrap";
-import ContactLensPrescription from "../Store/ContactLensPrescription";
+import ContactLensPrescription from "../../Store/ContactLensPrescription";
 import Backendless from "backendless";
-import {saveObject, getAllObject, getAllObjectByRelationField} from "../Business/BackendlessRequest"
+import {saveObject, getAllObject, getAllObjectByRelationField} from "../../Business/BackendlessRequest"
 import {useParams} from "react-router-dom";
 
 

@@ -5,11 +5,11 @@ import 'react-bootstrap-typeahead/css/Typeahead.css';
 import Order from "../../Store/Order";
 import {saveObject, getAllObject, getAllObjectByRelationField} from "../../Business/BackendlessRequest"
 import {BsPlusLg} from "react-icons/all";
-import LocationAddEdit from "../LocationAddEdit";
-import PatientAdd from "../PatientAdd";
-import SpectaclePrescriptionForm from "../SpectaclePrescriptionForm";
+import LocationAddEdit from "../Location/LocationAddEdit";
+import PatientAdd from "../Patient/PatientAdd";
+import SpectaclePrescriptionForm from "../Prescriptions/SpectaclePrescriptionForm";
 import ContactLensPrescription from "../../Store/ContactLensPrescription";
-import ContactLensPrescriptionForm from "../ContactLensPrescriptionForm";
+import ContactLensPrescriptionForm from "../Prescriptions/ContactLensPrescriptionForm";
 import InsuranceForm from "../Insurance/InsuranceForm";
 
 

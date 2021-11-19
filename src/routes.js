@@ -1,17 +1,16 @@
 import React from "react";
 import { Switch, Route, Redirect } from "react-router-dom";
-import Header from "./Components/Header";
-import Home from "./Components/Home";
-import CompanyAdd from "./Components/CompanyAdd";
-import CompanyList from "./Components/CompanyList";
-import SuperUserPatients from "./Components/SuperUserPatients";
-import PatientAdd from "./Components/PatientAdd";
-import PatientsTable from "./Components/PatientsTable";
-import SpectaclePrescriptionForm from "./Components/SpectaclePrescriptionForm";
-import SpectaclePrescriptionTable from "./Components/SpectaclePrescriptionTable";
-import ContactLensPrescriptionForm from "./Components/ContactLensPrescriptionForm";
-import ContactLensPrescriptionTable from "./Components/ContactLensPrescriptionTable";
-import UserProfile from "./Components/UserProfile";
+import Header from "./Components/Main/Header";
+import Home from "./Components/Main/Home";
+import CompanyAdd from "./Components/Company/CompanyAdd";
+import CompanyList from "./Components/Company/CompanyList";
+import PatientAdd from "./Components/Patient/PatientAdd";
+import PatientsTable from "./Components/Patient/PatientsTable";
+import SpectaclePrescriptionForm from "./Components/Prescriptions/SpectaclePrescriptionForm";
+import SpectaclePrescriptionTable from "./Components/Prescriptions/SpectaclePrescriptionTable";
+import ContactLensPrescriptionForm from "./Components/Prescriptions/ContactLensPrescriptionForm";
+import ContactLensPrescriptionTable from "./Components/Prescriptions/ContactLensPrescriptionTable";
+import UserProfile from "./Components/User/UserProfile";
 import OrderAdd from "./Components/Order/OrderAdd";
 
 export const useRoutes = (userType) => {
@@ -46,9 +45,6 @@ export const useRoutes = (userType) => {
                     <Switch>
                         <Route path='/home'>
                             <Home/>
-                        </Route>
-                        <Route path='/patients-super-user'>
-                            <SuperUserPatients/>
                         </Route>
                         <Route path='/new-patient'>
                             <PatientAdd title='Add Patient' btnText='Save'/>

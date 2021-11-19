@@ -1,12 +1,12 @@
 import {observer} from "mobx-react-lite";
 import React, {useEffect, useState} from "react";
 import {Button, Col, Container, Form, Row, Spinner, Table} from "react-bootstrap";
-import SpectaclePrescription from "../Store/SpectaclePrescription";
+import SpectaclePrescription from "../../Store/SpectaclePrescription";
 import Backendless from "backendless";
 import {useParams} from "react-router-dom";
-import generateSelectValues from "../Business/GenerateSelectValues";
+import generateSelectValues from "../../Business/GenerateSelectValues";
 import 'react-bootstrap-typeahead/css/Typeahead.css';
-import SelectAndSearch from "./Inputs/SelectAndSearch";
+import SelectAndSearch from "../Inputs/SelectAndSearch";
 
 
 const SpectaclePrescriptionForm = observer(({read = false}) => {

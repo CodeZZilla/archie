@@ -1,7 +1,7 @@
 import React from "react";
 import {Button, Container, Nav, Navbar, NavDropdown} from "react-bootstrap";
 import {LinkContainer} from 'react-router-bootstrap'
-import AuthStore from "../Store/AuthStore";
+import AuthStore from "../../Store/AuthStore";
 
 
 const Header = ({role}) => {
@@ -51,9 +51,14 @@ const Header = ({role}) => {
                                         <NavDropdown.Item>Create new order</NavDropdown.Item>
                                     </LinkContainer>
                                 </NavDropdown>
-                                <LinkContainer to="/patients-super-user">
-                                    <Nav.Link>Patients</Nav.Link>
-                                </LinkContainer>
+                                <NavDropdown title="Patients" id="patiens-dropdown">
+                                    <LinkContainer to="/new-patient">
+                                        <NavDropdown.Item>Add patient</NavDropdown.Item>
+                                    </LinkContainer>
+                                    <LinkContainer to="/patient-tables">
+                                        <NavDropdown.Item>List</NavDropdown.Item>
+                                    </LinkContainer>
+                                </NavDropdown>
                                 <NavDropdown title="Prescription" id="prescription-dropdown">
                                     <NavDropdown.Header>Spectacle</NavDropdown.Header>
                                     <LinkContainer to="/spectacle-prescription">

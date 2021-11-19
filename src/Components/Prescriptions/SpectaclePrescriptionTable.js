@@ -2,8 +2,8 @@ import React, {useState, useEffect} from 'react';
 import {Col, Container, Row, Spinner, Table} from "react-bootstrap";
 import {NavLink} from "react-router-dom";
 import Backendless from "backendless";
-import Loader from "./Loader";
-import loader from "../assets/images/eye.gif";
+import Loader from "../Main/Loader";
+import loader from "../../assets/images/eye.gif";
 
 
 export default function SpectaclePrescriptionTable() {

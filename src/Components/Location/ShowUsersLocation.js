@@ -1,7 +1,7 @@
 import {observer} from "mobx-react-lite";
 import {Button, Col, Container, Form, Row, Table} from "react-bootstrap";
 import React, {useEffect, useState} from "react";
-import Company from "../Store/Company";
+import Company from "../../Store/Company";
 import {BsFillTrashFill} from "react-icons/all";
 import Backendless from "backendless";
 

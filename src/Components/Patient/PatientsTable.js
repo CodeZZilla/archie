@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import {Button, Col, Container, Modal, Row, Spinner, Table} from "react-bootstrap";
 import {NavLink} from "react-router-dom";
 import Backendless from "backendless";
-import LocationAddEdit from "./LocationAddEdit";
+import LocationAddEdit from "../Location/LocationAddEdit";
 
 
 export default function PatientsTable() {

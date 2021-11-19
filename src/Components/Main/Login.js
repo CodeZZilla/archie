@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {Col, Container, Form, Image, Row, Button, Spinner} from "react-bootstrap";
 import {observer} from "mobx-react-lite";
-import AuthStore from "../Store/AuthStore";
+import AuthStore from "../../Store/AuthStore";
 
 
 const Login = observer(() => {

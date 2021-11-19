@@ -1,13 +1,14 @@
 import {Col, Row, Button, Container, Form, Table, Modal, Spinner, Dropdown} from "react-bootstrap";
 import React, {useState} from "react";
 import Backendless from "backendless";
-import LocationAddEdit from "./LocationAddEdit";
+import LocationAddEdit from "../Location/LocationAddEdit";
 import {FaBeer} from "react-icons/all";
-import UserAdd from "./UserAdd";
-import InputFormCompany from "./Inputs/InputFormCompany";
+import UserAdd from "../User/UserAdd";
+import InputForm from "../Inputs/InputForm";
+import InputFormCompany from "../Inputs/InputFormCompany";
 import {observer} from "mobx-react-lite";
-import CompanyStore from "../Store/Company";
-import ShowUsersLocation from "./ShowUsersLocation";
+import Company from "../../Store/Company";
+import ShowUsersLocation from "../Location/ShowUsersLocation";
 
 
 const CompanyAdd = observer(() => {
@@ -22,30 +23,29 @@ const CompanyAdd = observer(() => {
         const [showUsersOtherLocation, setShowUsersOtherLocation] = useState(false)
         const [showUsersAllLocation, setShowUsersAllLocation] = useState(false)
 
-
         let onFormSubmit = async (e) => {
             setBtnSpinnerShow(true)
             e.preventDefault()
-            if (CompanyStore.object.email !== '') {
+            if (Company.object.email !== '') {
                 try {
                     let loadRelationsQueryBuilder = Backendless.LoadRelationsQueryBuilder.create();
                     loadRelationsQueryBuilder.setRelationName("users_role");
-                    let saveCompany = await Backendless.Data.of("CompanyStore").save(CompanyStore.object)
-                    if (CompanyStore.adminCompany.email !== '' && CompanyStore.adminCompany.objectIdRole !== 'null') {
-                        let userAdminCompany = await Backendless.UserService.register(CompanyStore.getAdminCompanyDb())
+                    let saveCompany = await Backendless.Data.of("Company").save(Company.object)
+                    if (Company.adminCompany.email !== '' && Company.adminCompany.objectIdRole !== 'null') {
+                        let userAdminCompany = await Backendless.UserService.register(Company.getAdminCompanyDb())
 
                         //получение обьектов связи и перезапись их
-                        let arrUsersAdminsCompany = await Backendless.Data.of('Roles').loadRelations({objectId: CompanyStore.adminCompany.objectIdRole}, loadRelationsQueryBuilder)
-                        await Backendless.Data.of("Roles").setRelation({objectId: CompanyStore.adminCompany.objectIdRole},
+                        let arrUsersAdminsCompany = await Backendless.Data.of('Roles').loadRelations({objectId: Company.adminCompany.objectIdRole}, loadRelationsQueryBuilder)
+                        await Backendless.Data.of("Roles").setRelation({objectId: Company.adminCompany.objectIdRole},
                             "users_role", [...arrUsersAdminsCompany, {objectId: userAdminCompany.objectId}])
 
                         //admin company запись в компани его
-                        await Backendless.Data.of("CompanyStore").setRelation({objectId: saveCompany.objectId},
+                        await Backendless.Data.of("Company").setRelation({objectId: saveCompany.objectId},
                             'owner_company', [{objectId: userAdminCompany.objectId}])
                     }
                     //добавление локаций в бд
-                    if (CompanyStore.listLocation.length !== 0) {
-                        for await (let location of CompanyStore.listLocation) {
+                    if (Company.listLocation.length !== 0) {
+                        for await (let location of Company.listLocation) {
                             let saveLocationObject = {
                                 name_location: location.name_location,
                                 city_town: location.city_town,
@@ -63,7 +63,7 @@ const CompanyAdd = observer(() => {
                             // 1 к многому через дополнительную таблицу (к таблице Коспани)
                             let relation = await Backendless.Data.of("CompanyLocation").save({})
                             await Backendless.Data.of("CompanyLocation").setRelation(relation.objectId, "Location", [saveLocation.objectId])
-                            await Backendless.Data.of("CompanyLocation").setRelation(relation.objectId, "CompanyStore", [saveCompany.objectId])
+                            await Backendless.Data.of("CompanyLocation").setRelation(relation.objectId, "Company", [saveCompany.objectId])
 
                             //admin location запись в location его если есть
                             if (location.userAdmin.password !== undefined) {
@@ -128,14 +128,13 @@ const CompanyAdd = observer(() => {
                             }
                         }
                     }
-                    CompanyStore.resetCompany()
+                    Company.resetCompany()
                 } catch (ex) {
                     alert(ex.message)
                 }
             }
             setBtnSpinnerShow(false)
         }
-
 
         return (
             <div>
@@ -160,22 +159,22 @@ const CompanyAdd = observer(() => {
                             </Col>
                         </Row>
                         <Row className="mt-3">
-                            <Col className="col-lg-5 col-md-12">
-                                <InputFormCompany value={CompanyStore.object.name_company} id="name_company"
-                                                  title="Company name"/>
-                                <Row className="mt-3">
-                                    <Form.Label className="col-4">
-                                        Warehouse
-                                    </Form.Label>
-                                    <Col>
-                                        <Form.Select className="me-sm-2"
-                                                     onChange={(obj) => CompanyStore.edit('warehouse', Boolean(obj.target.value))}>
-                                            <option value={false}>False</option>
-                                            <option value={true}>True</option>
-                                        </Form.Select>
-                                    </Col>
-                                </Row>
-                                <Row className="mt-3">
+                            <Col className="col-4">
+                                <InputForm value={Company.object.name_company} id="name_company"
+                                           title="Company name" myKey="Company" />
+                            </Col>
+                            <Col className="col-4">
+                                <Form.Group className="mb-3">
+                                    <Form.Label>Warehouse</Form.Label>
+                                    <Form.Select className="me-sm-2"
+                                                 onChange={(obj) => Company.edit('warehouse', Boolean(obj.target.value))}>
+                                        <option value={false}>False</option>
+                                        <option value={true}>True</option>
+                                    </Form.Select>
+                                </Form.Group>
+                            </Col>
+                            <Col className="col-4">
+                                <Row className="mt-4">
                                     <Form.Label className="col-4">
                                         <Button variant="primary" onClick={() => setShowOwnerModal(true)}>
                                             Set Admin
@@ -183,9 +182,9 @@ const CompanyAdd = observer(() => {
                                     </Form.Label>
 
                                     <Col className="d-flex">
-                                        <p>{CompanyStore.adminCompany.objectIdRole === 'null' ?
+                                        <p>{Company.adminCompany.objectIdRole === 'null' ?
                                             'No Admin' :
-                                            CompanyStore.adminCompany.last_name + ' ' + CompanyStore.adminCompany.first_name}</p>
+                                            Company.adminCompany.last_name + ' ' + Company.adminCompany.first_name}</p>
                                     </Col>
 
                                     {/* modal add admin company user*/}
@@ -208,23 +207,43 @@ const CompanyAdd = observer(() => {
                                     </Modal>
 
                                 </Row>
-                                <InputFormCompany value={CompanyStore.object.main_contact} id="main_contact"
-                                                  title="Main contact"/>
-                                <InputFormCompany value={CompanyStore.object.street_address} id="street_address"
-                                                  title="Street address"/>
-                                <InputFormCompany value={CompanyStore.object.street_address_extra} id="street_address_extra"
-                                                  title="Street address (extra)"/>
-                                <InputFormCompany value={CompanyStore.object.city_town} id="city_town" title="City/Town"/>
-                                <InputFormCompany value={CompanyStore.object.state_province} id="state_province"
-                                                  title="State/Province"/>
-                                <InputFormCompany value={CompanyStore.object.zip_code} id="zip_code" title="Zip Code"/>
-                                <InputFormCompany value={CompanyStore.object.phone} id="phone" title="Phone"/>
-                                <InputFormCompany value={CompanyStore.object.email} id="email" title="Email Address"/>
-                                <InputFormCompany value={CompanyStore.object.tax_id} id="tax_id" title="Tax Id"/>
-                                <InputFormCompany value={CompanyStore.object.website_company} id="website_company"
-                                                  title="Website"/>
                             </Col>
-                            <Col className="mt-3">
+                            <Col className="col-4">
+                                <InputForm value={Company.object.main_contact} id="main_contact"
+                                           title="Main contact" myKey="Company" />
+                            </Col>
+                            <Col className="col-4">
+                                <InputForm value={Company.object.street_address} id="street_address"
+                                           title="Street address" myKey="Company" />
+                            </Col>
+                            <Col className="col-4">
+                                <InputForm value={Company.object.street_address_extra} id="street_address_extra"
+                                           title="Street address (extra)" myKey="Company"/>
+                            </Col>
+                            <Col className="col-4">
+                                <InputForm value={Company.object.city_town} id="city_town" title="City/Town" myKey="Company"/>
+                            </Col>
+                            <Col className="col-4">
+                                <InputForm value={Company.object.state_province} id="state_province"
+                                           title="State/Province" myKey="Company"/>
+                            </Col>
+                            <Col className="col-4">
+                                <InputForm value={Company.object.zip_code} id="zip_code" title="Zip Code" myKey="Company"/>
+                            </Col>
+                            <Col className="col-4">
+                                <InputForm value={Company.object.phone} id="phone" title="Phone" myKey="Company"/>
+                            </Col>
+                            <Col className="col-4">
+                                <InputForm value={Company.object.email} id="email" title="Email Address" myKey="Company"/>
+                            </Col>
+                            <Col className="col-4">
+                                <InputForm value={Company.object.tax_id} id="tax_id" title="Tax Id" myKey="Company"/>
+                            </Col>
+                            <Col className="col-4">
+                                <InputForm value={Company.object.website_company} id="website_company"
+                                           title="Website" myKey="Company"/>
+                            </Col>
+                            <Col className="col-12 mt-4">
                                 <Row className="justify-content-md-center">
                                     <Button className="col-4" variant="primary" type="button" onClick={() => setShow(true)}>
                                         Add new location
@@ -238,9 +257,6 @@ const CompanyAdd = observer(() => {
                                         size="lg"
                                         aria-labelledby="example-custom-modal-styling-title">
                                         <Modal.Header closeButton>
-                                            <Modal.Title id="example-custom-modal-styling-title">
-                                                Modal
-                                            </Modal.Title>
                                         </Modal.Header>
                                         <Modal.Body>
                                             <LocationAddEdit title="Create location" btnText="Create" indexLocation={null}
@@ -341,10 +357,10 @@ const CompanyAdd = observer(() => {
                                                 <th>Action</th>
                                             </tr>
                                             </thead>
-                                            {CompanyStore.listLocation.length > 0 ?
+                                            {Company.listLocation.length > 0 ?
                                                 <tbody>
-                                                {CompanyStore.listLocation.length > 0 ? CompanyStore.listLocation.map((value, index) =>
-                                                    <tr key={index}>
+                                                {Company.listLocation.length > 0 ? Company.listLocation.map((value, index) =>
+                                                    <tr myKey={index}>
                                                         <td>{index + 1}</td>
                                                         <td>{value.name_location}</td>
                                                         <td>{value.street_address}</td>
@@ -376,13 +392,13 @@ const CompanyAdd = observer(() => {
                                                                     </Dropdown.Item>
                                                                     <Dropdown.Item onClick={() => {
                                                                         setLocationIndexEdit(index)
-                                                                        setLocationEdit(CompanyStore.getLocation(index))
+                                                                        setLocationEdit(Company.getLocation(index))
                                                                         setShowEditLocation(true)
                                                                     }}>
                                                                         Edit location
                                                                     </Dropdown.Item>
                                                                     <Dropdown.Item
-                                                                        onClick={() => CompanyStore.removeListLocationItem(index)}>
+                                                                        onClick={() => Company.removeListLocationItem(index)}>
                                                                         Remove location
                                                                     </Dropdown.Item>
                                                                 </Dropdown.Menu>
