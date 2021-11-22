@@ -49,6 +49,10 @@ class Company {
         this.adminCompany = object
     }
 
+    setCompany(object){
+        this.object = object
+    }
+
     editAdminCompany(field, value) {
         this.adminCompany[field] = value
     }

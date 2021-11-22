@@ -15,6 +15,7 @@ import OrderAdd from "./Components/Order/OrderAdd";
 import LocationAddEdit from "./Components/Location/LocationAddEdit";
 import LocationList from "./Components/Location/LocationList";
 import CompanyItem from "./Components/Company/CompanyItem";
+import InventoryHome from "./Components/Inventory/InventoryHome";
 
 
 export const useRoutes = (userType) => {
@@ -37,7 +38,7 @@ export const useRoutes = (userType) => {
                             <CompanyItem/>
                         </Route>
                         <Route path='/location-add'>
-                            <LocationAddEdit/>
+                            <LocationAddEdit newFlag={true}/>
                         </Route>
                         <Route path='/location-list'>
                             <LocationList/>
@@ -85,6 +86,9 @@ export const useRoutes = (userType) => {
                         </Route>
                         <Route path='/order-add'>
                             <OrderAdd/>
+                        </Route>
+                        <Route path='/inventory'>
+                            <InventoryHome/>
                         </Route>
                     </Switch>
                 </div>

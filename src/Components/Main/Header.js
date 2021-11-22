@@ -56,6 +56,9 @@ const Header = ({role}) => {
                                 <LinkContainer to="/home">
                                     <Nav.Link>Home</Nav.Link>
                                 </LinkContainer>
+                                <LinkContainer to="/inventory">
+                                    <Nav.Link>Inventory</Nav.Link>
+                                </LinkContainer>
                                 <NavDropdown title="Orders" id="prescription-dropdown">
                                     <LinkContainer to="/order-add">
                                         <NavDropdown.Item>Create new order</NavDropdown.Item>

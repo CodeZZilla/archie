@@ -29,6 +29,7 @@ const OrderAdd = observer(() => {
     useEffect(async () => {
         setLocations(await getAllObject('Location'))
         setClients(await getAllObject('Client'))
+        Order.edit('date', Date.now())
         setIsLoading(false)
     }, [])
 
@@ -59,7 +60,7 @@ const OrderAdd = observer(() => {
                             <Form.Group className="mb-3">
                                 <Form.Label>Date order</Form.Label>
                                 <Form.Control type="date" placeholder="Birthday"
-                                              value={Order.object.date}
+                                              value={Order.object.date} disabled
                                               onChange={(obj) => Order.edit('date', obj.target.value)}/>
                             </Form.Group>
                         </Col>
@@ -135,24 +136,7 @@ const OrderAdd = observer(() => {
                         <Col className="col-12">
                             {
                                 radioValue === "Spectacles" ?
-                                    <Accordion>
-                                        <Accordion.Item eventKey="0">
-                                            <Accordion.Header>Insurance information</Accordion.Header>
-                                            <Accordion.Body>
-                                                <InsuranceForm fun={(insurance, doctor) => {
-                                                    Order.edit('insurance', insurance)
-                                                    Order.edit('doctor', doctor)
-                                                }}/>
-                                            </Accordion.Body>
-                                        </Accordion.Item>
-                                        <Accordion.Item eventKey="1">
-                                            <Accordion.Header>Spectacle Prescription Form</Accordion.Header>
-                                            <Accordion.Body>
-                                                <SpectaclePrescriptionForm/>
-                                            </Accordion.Body>
-                                        </Accordion.Item>
-                                    </Accordion> :
-                                    radioValue === "Contacts" ?
+                                    <>
                                         <Accordion>
                                             <Accordion.Item eventKey="0">
                                                 <Accordion.Header>Insurance information</Accordion.Header>
@@ -163,14 +147,19 @@ const OrderAdd = observer(() => {
                                                     }}/>
                                                 </Accordion.Body>
                                             </Accordion.Item>
+                                        </Accordion>
+                                        <Accordion>
                                             <Accordion.Item eventKey="1">
-                                                <Accordion.Header>Contact Lens Prescription Form</Accordion.Header>
+                                                <Accordion.Header>Spectacle Prescription Form</Accordion.Header>
                                                 <Accordion.Body>
-                                                    <ContactLensPrescriptionForm/>
+                                                    <SpectaclePrescriptionForm/>
                                                 </Accordion.Body>
                                             </Accordion.Item>
-                                        </Accordion> :
-                                        radioValue === "Both" ?
+                                        </Accordion>
+                                    </>
+                                    :
+                                    radioValue === "Contacts" ?
+                                        <>
                                             <Accordion>
                                                 <Accordion.Item eventKey="0">
                                                     <Accordion.Header>Insurance information</Accordion.Header>
@@ -181,19 +170,47 @@ const OrderAdd = observer(() => {
                                                         }}/>
                                                     </Accordion.Body>
                                                 </Accordion.Item>
+                                            </Accordion>
+                                            <Accordion>
                                                 <Accordion.Item eventKey="1">
-                                                    <Accordion.Header>Spectacle Prescription Form</Accordion.Header>
-                                                    <Accordion.Body>
-                                                        <SpectaclePrescriptionForm/>
-                                                    </Accordion.Body>
-                                                </Accordion.Item>
-                                                <Accordion.Item eventKey="2">
                                                     <Accordion.Header>Contact Lens Prescription Form</Accordion.Header>
                                                     <Accordion.Body>
                                                         <ContactLensPrescriptionForm/>
                                                     </Accordion.Body>
                                                 </Accordion.Item>
-                                            </Accordion> : null
+                                            </Accordion>
+                                        </> :
+                                        radioValue === "Both" ?
+                                            <>
+                                                <Accordion>
+                                                    <Accordion.Item eventKey="0">
+                                                        <Accordion.Header>Insurance information</Accordion.Header>
+                                                        <Accordion.Body>
+                                                            <InsuranceForm fun={(insurance, doctor) => {
+                                                                Order.edit('insurance', insurance)
+                                                                Order.edit('doctor', doctor)
+                                                            }}/>
+                                                        </Accordion.Body>
+                                                    </Accordion.Item>
+                                                </Accordion>
+                                                <Accordion>
+                                                    <Accordion.Item eventKey="1">
+                                                        <Accordion.Header>Spectacle Prescription Form</Accordion.Header>
+                                                        <Accordion.Body>
+                                                            <SpectaclePrescriptionForm/>
+                                                        </Accordion.Body>
+                                                    </Accordion.Item>
+                                                </Accordion>
+                                                <Accordion>
+                                                    <Accordion.Item eventKey="2">
+                                                        <Accordion.Header>Contact Lens Prescription
+                                                            Form</Accordion.Header>
+                                                        <Accordion.Body>
+                                                            <ContactLensPrescriptionForm/>
+                                                        </Accordion.Body>
+                                                    </Accordion.Item>
+                                                </Accordion>
+                                            </> : null
                             }
                         </Col>
                     </Row>

@@ -11,6 +11,10 @@ const InputForm = observer(({value, id, title, myKey}) => {
         const [isInvalid, setIsInvalid] = useState(false)
         const [valueMiddle, setValueMiddle] = useState('')
 
+        useEffect(async () => {
+            setValueMiddle(value)
+        }, [])
+
         return (
             <Form.Group className="mb-3">
                 <Form.Label>{title}</Form.Label>
@@ -67,9 +71,6 @@ const InputForm = observer(({value, id, title, myKey}) => {
                                                 }
                                             }}/>
                     }
-                    <Form.Control.Feedback type="invalid">
-                        Please choose a {title}.
-                    </Form.Control.Feedback>
                 </div>
             </Form.Group>
         )
