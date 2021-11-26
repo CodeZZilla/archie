@@ -16,7 +16,7 @@ import Patient from "../../Store/Patient";
 import {Redirect} from "react-router-dom";
 
 
-const LocationAddEdit = observer(({title, btnText, objectIdLocation, fun, companyId, newFlag = false}) => {
+const LocationAddEdit = observer(({title, btnText, objectIdLocation=undefined, fun, companyId, newFlag = false}) => {
     const [isLoading, setIsLoading] = useState(true)
     const [btnSpinnerShow, setBtnSpinnerShow] = useState(false)
     const [companyNewFlag, setCompanyNewFlag] = useState({})
@@ -84,12 +84,14 @@ const LocationAddEdit = observer(({title, btnText, objectIdLocation, fun, compan
         redirect ?
             <Redirect to="/location-list"/>:
         isLoading ?
-            <div>
-                <h1>Location...</h1>
-                <Spinner className="my-load-spinner mt-5" animation="border" variant="secondary" role="status">
-                    <span className="visually-hidden">Loading...</span>
-                </Spinner>
-            </div> :
+            <Container className="">
+                <Row className="justify-content-md-center">
+                    <h1 className="row justify-content-md-center">Location...</h1>
+                    <Spinner className="my-load-spinner mt-5" animation="border" variant="secondary" role="status">
+                        <span className="visually-hidden">Loading...</span>
+                    </Spinner>
+                </Row>
+            </Container> :
             <div>
                 <Form>
                     <Container className={newFlag ? "mt-4": null}>

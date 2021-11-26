@@ -23,7 +23,6 @@ class ContactLensPrescription {
         axis_right: '',
         dia_left: '',
         dia_right: '',
-        client: '',
         doctor: '',
         prescription_date: ''
     }
@@ -44,7 +43,6 @@ class ContactLensPrescription {
         this.object = {
             prescription_date: '',
             doctor: '',
-            client: '',
             contact_presc_img: '',
             pwr_left: '',
             cyl_right: '',

@@ -3,7 +3,7 @@ import React, {useEffect, useState} from "react";
 import {Button, Col, Container, Form, Row, Spinner, Table} from "react-bootstrap";
 import ContactLensPrescription from "../../Store/ContactLensPrescription";
 import Backendless from "backendless";
-import {saveObject, getAllObject, getAllObjectByRelationField} from "../../Business/BackendlessRequest"
+import {saveObject, getAllObject, setObjectRelationOneToMany} from "../../Business/BackendlessRequest"
 import {useParams} from "react-router-dom";
 import ContactLensTable from "./ContactLensTable";
 
@@ -11,8 +11,8 @@ import ContactLensTable from "./ContactLensTable";
 const ContactLensPrescriptionForm = observer(({read = false}) => {
     const [isLoading, setIsLoading] = useState(true)
     const [btnSpinnerShow, setBtnSpinnerShow] = useState(false)
-    const [doctors, setDoctors] = useState([])
     const [clients, setClients] = useState([])
+    const [clientSelect, setClientSelect] = useState("")
     let {id} = useParams();
 
     useEffect(async () => {
@@ -23,11 +23,11 @@ const ContactLensPrescriptionForm = observer(({read = false}) => {
             ContactLensPrescription.create(spectaclePrescription)
         }
 
-        // Optician
-        let arrOpticians = await getAllObjectByRelationField('users_role', 'Roles', {objectId: "0243FCB6-D04E-4F3D-AD5F-3FDA300A58C0"})
-        // Optometrist
-        let arrOptometrists = await getAllObjectByRelationField('users_role', 'Roles', {objectId: "1DE37DEA-91E2-4502-B24B-A593D0E8AA68"})
-        setDoctors([...arrOpticians, ...arrOptometrists])
+        // // Optician
+        // let arrOpticians = await getAllObjectByRelationField('users_role', 'Roles', {objectId: "0243FCB6-D04E-4F3D-AD5F-3FDA300A58C0"})
+        // // Optometrist
+        // let arrOptometrists = await getAllObjectByRelationField('users_role', 'Roles', {objectId: "1DE37DEA-91E2-4502-B24B-A593D0E8AA68"})
+        // setDoctors([...arrOpticians, ...arrOptometrists])
 
         let clientsAll = await getAllObject('Client')
         setClients(clientsAll)
@@ -37,7 +37,8 @@ const ContactLensPrescriptionForm = observer(({read = false}) => {
     let save = async (e) => {
         setBtnSpinnerShow(true)
         e.preventDefault()
-        await saveObject("ContactLensPrescription", ContactLensPrescription.object)
+        let saveObj = await saveObject("ContactLensPrescription", ContactLensPrescription.object)
+        await setObjectRelationOneToMany("contact_lens_pr", "Client", {objectId: clientSelect}, saveObj)
         ContactLensPrescription.reset()
         setBtnSpinnerShow(false)
     }
@@ -89,8 +90,8 @@ const ContactLensPrescriptionForm = observer(({read = false}) => {
                             </tr>
                             <tr className="row">
                                 <td className="col">
-                                    <Form.Select className="me-sm-2" value={ContactLensPrescription.object.client}
-                                                 onChange={(obj) => ContactLensPrescription.edit('client', obj.target.value)}>
+                                    <Form.Select className="me-sm-2" value={clientSelect}
+                                                 onChange={(obj) => setClientSelect(obj.target.value)}>
                                         <option value="null">Unselected</option>
                                         {
                                             clients.map(value => {
@@ -105,22 +106,24 @@ const ContactLensPrescriptionForm = observer(({read = false}) => {
                                                   onChange={(obj) => ContactLensPrescription.edit('prescription_date', obj.target.value)}/>
                                 </td>
                                 <td className="col">
-                                    <Form.Select className="me-sm-2" value={ContactLensPrescription.object.doctor}
-                                                 onChange={(obj) => ContactLensPrescription.edit('doctor', obj.target.value)}>
-                                        <option value="null">Unselected</option>
-                                        {
-                                            doctors.map(value => {
-                                                return <option key={value.objectId}
-                                                               value={value.objectId}>{value.first_name} {value.last_name}</option>
-                                            })
-                                        }
-                                    </Form.Select>
+                                    <Form.Control type="text" value={ContactLensPrescription.object.doctor}
+                                                  onChange={(obj) => ContactLensPrescription.edit('doctor', obj.target.value)}/>
+                                    {/*<Form.Select className="me-sm-2" value={ContactLensPrescription.object.doctor}*/}
+                                    {/*             onChange={(obj) => ContactLensPrescription.edit('doctor', obj.target.value)}>*/}
+                                    {/*    <option value="null">Unselected</option>*/}
+                                    {/*    {*/}
+                                    {/*        doctors.map(value => {*/}
+                                    {/*            return <option key={value.objectId}*/}
+                                    {/*                           value={value.objectId}>{value.first_name} {value.last_name}</option>*/}
+                                    {/*        })*/}
+                                    {/*    }*/}
+                                    {/*</Form.Select>*/}
                                 </td>
                             </tr>
                             </tbody>
                         </Table>
                     </Row>
-                    <ContactLensTable/>
+                    <ContactLensTable addFlag={true}/>
                 </Container>
             </div>
     )

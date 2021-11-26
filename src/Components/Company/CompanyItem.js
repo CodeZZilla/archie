@@ -1,5 +1,5 @@
 import {useParams} from "react-router-dom";
-import {Container, Row, Spinner, Col, Table, Accordion, Dropdown, Button, Modal} from "react-bootstrap";
+import {Container, Row, Spinner, Col, Table, Accordion, Button, Modal} from "react-bootstrap";
 import React, {useEffect, useState} from "react";
 import Backendless from "backendless";
 import Company from "../../Store/Company";
@@ -8,14 +8,17 @@ import CustomAlert from "../Alerts/CustomAlert";
 import AlertStatus from "../../Store/AlertStatus";
 import {getAllObjectByRelationField} from "../../Business/BackendlessRequest";
 import CompanyAdd from "./CompanyAdd";
+import UserAdd from "../User/UserAdd";
 
 
 const CompanyItem = () => {
     const [isLoading, setIsLoading] = useState(true)
     const [company, setCompany] = useState({})
     const [locations, setLocations] = useState([])
+    const [usersOfCompany, setUsersOfCompany] = useState([])
     const [newEditLocation, setNewEditLocation] = useState(false)
     const [editCompany, setEditCompany] = useState(false)
+    const [showOwnerModal, setShowOwnerModal] = useState(false)
     const [editLocationObjectId, setEditLocationObjectId] = useState('')
     let {id} = useParams();
 
@@ -23,7 +26,18 @@ const CompanyItem = () => {
         try {
             AlertStatus.setStatus(false)
             let company = await Backendless.Data.of("Company").findById(id)
-            setLocations(await getAllObjectByRelationField("locations", "Company", company))
+            let locations = await getAllObjectByRelationField("locations", "Company", company)
+            setLocations(locations)
+
+            let users = []
+            for await (let item of locations){
+                let itemUsers = await getAllObjectByRelationField("other_users", "Location", item)
+                for await (let usr of itemUsers){
+                    users.push(usr)
+                }
+            }
+            console.log(users)
+            setUsersOfCompany(users)
             setCompany(company)
         } catch (error) {
             AlertStatus.setAll(true, "Oh snap! You got an error!", error.message, "danger")
@@ -193,13 +207,13 @@ const CompanyItem = () => {
                                                 <td>{value.city_town}</td>
                                                 <td>{value.state_province}</td>
                                                 <td className="row">
-                                                    <Button className="col-4 p-1" variant="outline-success">Open</Button>
-                                                    <Button className="col-4 p-1" variant="outline-primary" onClick={() => {
+                                                    <Button className="col-4 p-1" disabled variant="outline-success">Open</Button>
+                                                    <Button className="col-4 p-1" disabled variant="outline-primary" onClick={() => {
                                                         setEditLocationObjectId(value.objectId.toString())
                                                         console.log(editLocationObjectId)
                                                         setNewEditLocation(true)
                                                     }}>Edit</Button>
-                                                    <Button className="col-4 p-1" variant="outline-danger" onClick={() => {
+                                                    <Button className="col-4 p-1" disabled variant="outline-danger" onClick={() => {
                                                         setEditLocationObjectId(value.objectId.toString())
                                                         console.log(editLocationObjectId)
                                                         setNewEditLocation(true)
@@ -222,7 +236,7 @@ const CompanyItem = () => {
                         <Accordion.Item eventKey="1">
                             <Accordion.Header>Users</Accordion.Header>
                             <Accordion.Body>
-                                <Button variant="outline-dark">Add new user</Button>
+                                <Button variant="outline-dark" onClick={() => setShowOwnerModal(true)}>Add new user</Button>
                                 <Table className="mt-3" striped bordered hover>
                                     <thead>
                                     <tr>
@@ -231,17 +245,45 @@ const CompanyItem = () => {
                                         <th>Location</th>
                                         <th>Email</th>
                                         <th>Phone</th>
-                                        <th>Role</th>
                                         <th>Action</th>
                                     </tr>
                                     </thead>
-                                    <tbody>
-                                    <tr>
-                                        <td colSpan="7">
-                                            <h3 className="text-center">There is no users in this location</h3>
-                                        </td>
-                                    </tr>
-                                    </tbody>
+                                    {usersOfCompany.length > 0 ?
+                                        <tbody>
+                                        {usersOfCompany.length > 0 ? usersOfCompany.map((value, index) =>
+                                            <tr>
+                                                <td>{index + 1}</td>
+                                                <td>{value.first_name} {value.last_name}</td>
+                                                <td>UserLocation</td>
+                                                <td>{value.email}</td>
+                                                <td>{value.phone}</td>
+                                                <td className="row">
+                                                    <Button className="col-4 p-1" disabled
+                                                            variant="outline-success">Open</Button>
+                                                    <Button className="col-4 p-1" disabled variant="outline-primary"
+                                                            onClick={() => {
+                                                                setEditLocationObjectId(value.objectId.toString())
+                                                                console.log(editLocationObjectId)
+                                                                setNewEditLocation(true)
+                                                            }}>Edit</Button>
+                                                    <Button className="col-4 p-1" disabled variant="outline-danger"
+                                                            onClick={() => {
+                                                                setEditLocationObjectId(value.objectId.toString())
+                                                                console.log(editLocationObjectId)
+                                                                setNewEditLocation(true)
+                                                            }}>Delete</Button>
+                                                </td>
+                                            </tr>
+                                        ) : null}
+                                        </tbody> :
+                                        <tbody>
+                                        <tr>
+                                            <td colSpan="7">
+                                                <h3 className="text-center">There is no users in this location</h3>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    }
                                 </Table>
                             </Accordion.Body>
                         </Accordion.Item>
@@ -259,7 +301,7 @@ const CompanyItem = () => {
                     </Modal.Header>
                     <Modal.Body>
                         {
-                            editLocationObjectId !== "" ?
+                            editLocationObjectId === "" ?
                                 <LocationAddEdit title="Create location" btnText="Create" companyId={company.objectId}
                                                  fun={async () => {
                                                      setNewEditLocation(false)
@@ -292,6 +334,35 @@ const CompanyItem = () => {
                                     }}/>
                     </Modal.Body>
                 </Modal>
+
+
+                {/* modal add company users*/}
+                <Modal
+                    show={showOwnerModal}
+                    onHide={() => setShowOwnerModal(false)}
+                    dialogClassName="w-75"
+                    size="lg"
+                    aria-labelledby="modal-owner">
+                    <Modal.Header closeButton>
+                        <Modal.Title id="modal-owner">
+                            Modal
+                        </Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <UserAdd fun={  async () => {
+                            let users = []
+                            for await (let item of locations){
+                                let itemUsers = await getAllObjectByRelationField("other_users", "Location", item)
+                                for await (let usr of itemUsers){
+                                    users.push(usr)
+                                }
+                            }
+                            setUsersOfCompany(users)
+                            setShowOwnerModal(false)
+                        }} addStatus="addOther" idCompany={company.objectId}/>
+                    </Modal.Body>
+                </Modal>
+
             </Container>
 
 

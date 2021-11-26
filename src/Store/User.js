@@ -6,6 +6,7 @@ class User {
         city: '',
         street: '',
         state: '',
+        RoleTmp: 'UserLocation',
         first_name: '',
         email: '',
         zip: '',

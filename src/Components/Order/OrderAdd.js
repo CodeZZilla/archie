@@ -1,9 +1,27 @@
 import {observer} from "mobx-react-lite";
 import React, {useEffect, useState} from "react";
-import {Accordion, Button, ButtonGroup, Col, Container, Form, Modal, Row, Spinner, ToggleButton} from "react-bootstrap";
+import {
+    Accordion,
+    Button,
+    ButtonGroup,
+    Col,
+    Container,
+    Form,
+    Modal,
+    Row,
+    Spinner,
+    Table,
+    ToggleButton
+} from "react-bootstrap";
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 import Order from "../../Store/Order";
-import {saveObject, getAllObject, getAllObjectByRelationField} from "../../Business/BackendlessRequest"
+import {
+    saveObject,
+    getAllObject,
+    getAllObjectByRelationField,
+    getRelObject,
+    getRelObjectDepth1, getRelObjectDepth1All
+} from "../../Business/BackendlessRequest"
 import {BsPlusLg} from "react-icons/all";
 import LocationAddEdit from "../Location/LocationAddEdit";
 import PatientAdd from "../Patient/PatientAdd";
@@ -11,13 +29,21 @@ import SpectaclePrescriptionForm from "../Prescriptions/SpectaclePrescriptionFor
 import ContactLensPrescription from "../../Store/ContactLensPrescription";
 import ContactLensPrescriptionForm from "../Prescriptions/ContactLensPrescriptionForm";
 import InsuranceForm from "../Insurance/InsuranceForm";
+import Backendless from "backendless";
+import OrderContactLensPrescription from "./OrderContactLensPrescription";
+import OrderSpectaclePrescription from "./OrderSpectaclePrescription";
+import SpectacleLensInfo from "../Prescriptions/SpectacleLensInfo";
+import Patient from "../../Store/Patient";
+import SpectacleLens from "../../Store/SpectacleLens";
+import OrderAddProduct from "./OrderAddProduct";
 
 
 const OrderAdd = observer(() => {
     const [isLoading, setIsLoading] = useState(true)
-    const [clients, setClients] = useState([])
-    const [locations, setLocations] = useState([])
+    const [location, setLocation] = useState(null)
     const [showModalAddClient, setShowModalAddClient] = useState(false)
+    const [clients, setClients] = useState([])
+
     const [radioValue, setRadioValue] = useState(null);
 
     const radios = [
@@ -27,9 +53,27 @@ const OrderAdd = observer(() => {
     ];
 
     useEffect(async () => {
-        setLocations(await getAllObject('Location'))
+        //setLocation(await getRelObject())
+        //Order.edit('location', )
         setClients(await getAllObject('Client'))
-        Order.edit('date', Date.now())
+        let userCurrent = await Backendless.UserService.getCurrentUser()
+        let allLocations = await getRelObjectDepth1All("Location")
+        let tmp = false
+        for await (let item of allLocations) {
+            if (tmp) break
+            for await (let user of item.other_users) {
+                if (tmp) break
+                if (userCurrent.objectId === user.objectId) {
+                    setLocation(item)
+                    tmp = true
+                }
+            }
+        }
+
+        let curr = new Date();
+        curr.setDate(curr.getDate());
+        let date = curr.toISOString().substr(0, 10);
+        Order.edit('date', date)
         setIsLoading(false)
     }, [])
 
@@ -45,12 +89,13 @@ const OrderAdd = observer(() => {
                     </Row>
                 </Container>
             </div> :
-            <div className="mt-5">
+            <div className="mt-5 mb-5">
                 <Container>
                     <Row>
                         <Col className="d-flex justify-content-between">
                             <h1 className="text-center">Create new order</h1>
-                            <Button className="d-flex justify-content-end" type="button" variant="success" size="lg">
+                            <Button className="d-flex justify-content-end" disabled type="button" variant="success"
+                                    size="lg">
                                 Save Only
                             </Button>
                         </Col>
@@ -59,9 +104,25 @@ const OrderAdd = observer(() => {
                         <Col className="col-3">
                             <Form.Group className="mb-3">
                                 <Form.Label>Date order</Form.Label>
-                                <Form.Control type="date" placeholder="Birthday"
-                                              value={Order.object.date} disabled
-                                              onChange={(obj) => Order.edit('date', obj.target.value)}/>
+                                <Form.Control type="date" placeholder="Date order" defaultValue={Order.object.date}
+                                              disabled/>
+                            </Form.Group>
+                        </Col>
+                        <Col className="col-3">
+                            <Form.Group className="mb-3">
+                                <Form.Label>Location</Form.Label>
+                                {/*<Form.Select className="me-sm-2" value={Order.object.location}*/}
+                                {/*             onChange={(obj) => Order.edit('location', obj.target.value)}>*/}
+                                {/*    <option value="null">Unselected</option>*/}
+                                {/*    {*/}
+                                {/*        locations.map(value => {*/}
+                                {/*            return <option key={value.objectId}*/}
+                                {/*                           value={value.objectId}>{value.name_location} {value.street_address}</option>*/}
+                                {/*        })*/}
+                                {/*    }*/}
+                                {/*</Form.Select>*/}
+                                <Form.Control type="text" placeholder="Location" defaultValue={location.name_location}
+                                              disabled/>
                             </Form.Group>
                         </Col>
                         <Col className="col-3">
@@ -70,7 +131,7 @@ const OrderAdd = observer(() => {
                                 <div className="d-flex">
                                     <Form.Select className="me-sm-2" value={Order.object.client}
                                                  onChange={(obj) => Order.edit('client', obj.target.value)}>
-                                        <option value="null">Unselected</option>
+                                        <option value={null}>Unselected</option>
                                         {
                                             clients.map(value => {
                                                 return <option key={value.objectId}
@@ -99,40 +160,33 @@ const OrderAdd = observer(() => {
                         </Col>
                         <Col className="col-3">
                             <Form.Group className="mb-3">
-                                <Form.Label>Location</Form.Label>
-                                <Form.Select className="me-sm-2" value={Order.object.location}
-                                             onChange={(obj) => Order.edit('location', obj.target.value)}>
-                                    <option value="null">Unselected</option>
-                                    {
-                                        locations.map(value => {
-                                            return <option key={value.objectId}
-                                                           value={value.objectId}>{value.name_location} {value.street_address}</option>
-                                        })
-                                    }
-                                </Form.Select>
+                                <Form.Label>Doctor</Form.Label>
+                                <Form.Control type="text" placeholder="John Doe"/>
                             </Form.Group>
                         </Col>
-                        <Col className="col-3">
-                            <Form.Group className="mb-3">
-                                <Form.Label>Order type</Form.Label>
-                                <ButtonGroup className="mb-2">
-                                    {radios.map((radio, idx) => (
-                                        <ToggleButton
-                                            key={idx}
-                                            id={`radio-${idx}`}
-                                            type="radio"
-                                            variant="outline-primary"
-                                            name="radio"
-                                            value={radio.value}
-                                            checked={radioValue === radio.value}
-                                            onChange={(e) => setRadioValue(e.currentTarget.value)}
-                                        >
-                                            {radio.name}
-                                        </ToggleButton>
-                                    ))}
-                                </ButtonGroup>
-                            </Form.Group>
-                        </Col>
+                        <Row className="mt-1 mb-1 justify-content-md-around">
+                            <Col className="col-3 ">
+                                <Form.Group className="mb-3">
+                                    <Form.Label>Order type</Form.Label>
+                                    <ButtonGroup className="mb-2">
+                                        {radios.map((radio, idx) => (
+                                            <ToggleButton
+                                                key={idx}
+                                                id={`radio-${idx}`}
+                                                type="radio"
+                                                variant="outline-primary"
+                                                name="radio"
+                                                value={radio.value}
+                                                checked={radioValue === radio.value}
+                                                onChange={(e) => setRadioValue(e.currentTarget.value)}
+                                            >
+                                                {radio.name}
+                                            </ToggleButton>
+                                        ))}
+                                    </ButtonGroup>
+                                </Form.Group>
+                            </Col>
+                        </Row>
                         <Col className="col-12">
                             {
                                 radioValue === "Spectacles" ?
@@ -141,9 +195,8 @@ const OrderAdd = observer(() => {
                                             <Accordion.Item eventKey="0">
                                                 <Accordion.Header>Insurance information</Accordion.Header>
                                                 <Accordion.Body>
-                                                    <InsuranceForm fun={(insurance, doctor) => {
+                                                    <InsuranceForm fun={(insurance) => {
                                                         Order.edit('insurance', insurance)
-                                                        Order.edit('doctor', doctor)
                                                     }}/>
                                                 </Accordion.Body>
                                             </Accordion.Item>
@@ -152,7 +205,23 @@ const OrderAdd = observer(() => {
                                             <Accordion.Item eventKey="1">
                                                 <Accordion.Header>Spectacle Prescription Form</Accordion.Header>
                                                 <Accordion.Body>
-                                                    <SpectaclePrescriptionForm/>
+                                                    <OrderSpectaclePrescription/>
+                                                </Accordion.Body>
+                                            </Accordion.Item>
+                                        </Accordion>
+                                        <Accordion>
+                                            <Accordion.Item eventKey="2">
+                                                <Accordion.Header>Spectacle Lens Info</Accordion.Header>
+                                                <Accordion.Body>
+                                                    <SpectacleLensInfo/>
+                                                </Accordion.Body>
+                                            </Accordion.Item>
+                                        </Accordion>
+                                        <Accordion>
+                                            <Accordion.Item eventKey="3">
+                                                <Accordion.Header>Products</Accordion.Header>
+                                                <Accordion.Body>
+                                                    <OrderAddProduct/>
                                                 </Accordion.Body>
                                             </Accordion.Item>
                                         </Accordion>
@@ -164,9 +233,8 @@ const OrderAdd = observer(() => {
                                                 <Accordion.Item eventKey="0">
                                                     <Accordion.Header>Insurance information</Accordion.Header>
                                                     <Accordion.Body>
-                                                        <InsuranceForm fun={(insurance, doctor) => {
+                                                        <InsuranceForm fun={(insurance) => {
                                                             Order.edit('insurance', insurance)
-                                                            Order.edit('doctor', doctor)
                                                         }}/>
                                                     </Accordion.Body>
                                                 </Accordion.Item>
@@ -175,7 +243,15 @@ const OrderAdd = observer(() => {
                                                 <Accordion.Item eventKey="1">
                                                     <Accordion.Header>Contact Lens Prescription Form</Accordion.Header>
                                                     <Accordion.Body>
-                                                        <ContactLensPrescriptionForm/>
+                                                        <OrderContactLensPrescription/>
+                                                    </Accordion.Body>
+                                                </Accordion.Item>
+                                            </Accordion>
+                                            <Accordion>
+                                                <Accordion.Item eventKey="2">
+                                                    <Accordion.Header>Spectacle Lens Info</Accordion.Header>
+                                                    <Accordion.Body>
+                                                        <SpectacleLensInfo/>
                                                     </Accordion.Body>
                                                 </Accordion.Item>
                                             </Accordion>
@@ -186,9 +262,8 @@ const OrderAdd = observer(() => {
                                                     <Accordion.Item eventKey="0">
                                                         <Accordion.Header>Insurance information</Accordion.Header>
                                                         <Accordion.Body>
-                                                            <InsuranceForm fun={(insurance, doctor) => {
+                                                            <InsuranceForm fun={(insurance) => {
                                                                 Order.edit('insurance', insurance)
-                                                                Order.edit('doctor', doctor)
                                                             }}/>
                                                         </Accordion.Body>
                                                     </Accordion.Item>
@@ -197,7 +272,7 @@ const OrderAdd = observer(() => {
                                                     <Accordion.Item eventKey="1">
                                                         <Accordion.Header>Spectacle Prescription Form</Accordion.Header>
                                                         <Accordion.Body>
-                                                            <SpectaclePrescriptionForm/>
+                                                            <OrderSpectaclePrescription/>
                                                         </Accordion.Body>
                                                     </Accordion.Item>
                                                 </Accordion>
@@ -206,7 +281,15 @@ const OrderAdd = observer(() => {
                                                         <Accordion.Header>Contact Lens Prescription
                                                             Form</Accordion.Header>
                                                         <Accordion.Body>
-                                                            <ContactLensPrescriptionForm/>
+                                                            <OrderContactLensPrescription/>
+                                                        </Accordion.Body>
+                                                    </Accordion.Item>
+                                                </Accordion>
+                                                <Accordion>
+                                                    <Accordion.Item eventKey="2">
+                                                        <Accordion.Header>Spectacle Lens Info</Accordion.Header>
+                                                        <Accordion.Body>
+                                                            <SpectacleLensInfo/>
                                                         </Accordion.Body>
                                                     </Accordion.Item>
                                                 </Accordion>

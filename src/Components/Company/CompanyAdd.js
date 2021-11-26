@@ -214,14 +214,15 @@ const CompanyAdd = observer(({idCompany = null, fun}) => {
                             <Col className="col-4">
                                 <Row className="mt-4">
                                     <Form.Label className="col-4">
-                                        <Button variant="primary" onClick={() => setShowOwnerModal(true)}>
+                                        <Button variant="primary" disabled onClick={() => setShowOwnerModal(true)}>
                                             Set Admіn
                                         </Button>
                                     </Form.Label>
 
                                     <Col className="d-flex">
                                         <p>{Company.adminCompany.objectIdRole === 'null' ?
-                                            'No Admin' :
+                                            // 'No Admin' :
+                                            'in progress':
                                             Company.adminCompany.last_name + ' ' + Company.adminCompany.first_name}</p>
                                     </Col>
 

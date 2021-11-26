@@ -4,20 +4,34 @@ import {getAllObject, getAllObjectByRelationField} from "../../Business/Backendl
 import React, {useEffect, useState} from "react";
 import InsuranceAdd from "./InsuranceAdd";
 import Order from "../../Store/Order";
+import Select from "react-select";
 
 
 const InsuranceForm = observer(({fun}) => {
     const [isLoading, setIsLoading] = useState(true)
     const [insurance, setInsurance] = useState([]);
-    const [selectInsurance, setSelectInsurance] = useState(null);
+    const [selectInsurance, setSelectInsurance] = useState([]);
     const [show, setShow] = useState(false)
 
 
     useEffect(async () => {
-        setInsurance(await getAllObject('InsuranceCompany'))
+        await setOptions()
         setIsLoading(false)
         Order.reset()
-    })
+    }, [])
+
+    let setOptions = async () =>{
+        let insurance = await getAllObject('InsuranceCompany')
+        let options = []
+        for (let item of insurance) {
+            options.push({
+                value: item.objectId,
+                label: item.name + ' ' + item.policy_number
+            })
+        }
+        setInsurance(options)
+    }
+
 
     return (
         isLoading ?
@@ -32,11 +46,32 @@ const InsuranceForm = observer(({fun}) => {
                 </Container>
             </div> :
             <Row className="d-flex justify-content-md-center">
-                <Col className="col-4">
-                    <Form.Group className="mb-3">
-                        <Form.Label>Client insurance</Form.Label>
+                <Col className="col-6">
+                    <Form.Group className="mb-3 w-100" controlId="hobbies">
+                        <Form.Label>Insurance</Form.Label>
                         <div className="d-flex">
-                            <Form.Select className="me-sm-2" value={selectInsurance}
+                            <Select  isMulti className="m-2 w-100" options={insurance} onChange={(array)=>Order.edit("selectedInsurance",array)}  />
+                            <Button className="m-2" variant="outline-primary" onClick={() => setShow(true)}>Add</Button>
+                            <Modal
+                                show={show}
+                                onHide={() => setShow(false)}
+                                dialogClassName="w-75"
+                                size="lg"
+                                aria-labelledby="example-custom-modal-styling-title">
+                                <Modal.Header closeButton/>
+                                <Modal.Body>
+                                    <InsuranceAdd fun={ async () => {
+                                        setShow(false)
+                                        await setOptions()
+                                    }}/>
+                                </Modal.Body>
+                            </Modal>
+                        </div>
+                    </Form.Group>
+                    {/*<Form.Group className="mb-3">
+                        <Form.Label>Insurance</Form.Label>
+                        <div className="d-flex">
+                            <Form.Select className="me-sm-2" value={Order.object.insurance}
                                          onChange={(obj) => setSelectInsurance(obj.target.value)}>
                                 <option value="null">Unselected</option>
                                 {
@@ -46,36 +81,8 @@ const InsuranceForm = observer(({fun}) => {
                                     })
                                 }
                             </Form.Select>
-                            <Button variant="outline-primary" onClick={() => setShow(true)}>Add</Button>
-                            <Modal
-                                show={show}
-                                onHide={() => setShow(false)}
-                                dialogClassName="w-75"
-                                size="lg"
-                                aria-labelledby="example-custom-modal-styling-title">
-                                <Modal.Header closeButton/>
-                                <Modal.Body>
-                                    <InsuranceAdd/>
-                                </Modal.Body>
-                            </Modal>
                         </div>
-                    </Form.Group>
-                </Col>
-                <Col className="col-4" controlId="doctor">
-                    <Form.Group className="mb-3">
-                        <Form.Label>Doctor</Form.Label>
-                        <div className="d-flex">
-                            <Form.Control type="text" placeholder="John Doe" className="me-sm-2"
-                                          value={Order.object.doctor}
-                                          onChange={(obj) => {
-                                              Order.edit("doctor", obj.target.value)
-                                          }}/>
-                            <Button variant="outline-primary"
-                                    onClick={() => {
-                                        setShow(true)
-                                    }}>Add</Button>
-                        </div>
-                    </Form.Group>
+                    </Form.Group>*/}
                 </Col>
             </Row>
     )

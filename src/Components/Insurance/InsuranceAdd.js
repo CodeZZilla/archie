@@ -1,18 +1,29 @@
 import {observer} from "mobx-react-lite";
 import {Button, Col, Container, Form, Modal, Row, Spinner} from "react-bootstrap";
 import React, {useEffect, useState} from "react";
-import InputFormPatient from "../Inputs/InputFormPatient";
-import Patient from "../../Store/Patient";
 import Order from "../../Store/Order";
+import {saveObject} from "../../Business/BackendlessRequest";
 
 
-const InsuranceAdd = observer(() => {
+const InsuranceAdd = observer(({fun}) => {
     const [isLoading, setIsLoading] = useState(true)
     const [btnSpinnerShow, setBtnSpinnerShow] = useState(false)
+    const [nameInsurance, setNameInsurance] = useState("")
+    const [policy, setPolicy] = useState("")
 
     useEffect(async () => {
         setIsLoading(false)
     }, [])
+
+    let save = async () => {
+        setBtnSpinnerShow(true)
+        await saveObject("InsuranceCompany", {
+            name: nameInsurance,
+            policy_number: policy
+        })
+        setBtnSpinnerShow(false)
+        await fun()
+    }
 
     return (
         isLoading ?
@@ -31,7 +42,7 @@ const InsuranceAdd = observer(() => {
                     <Row className="justify-content-md-center">
                         <Col className="d-flex justify-content-between">
                             <h1 className="text-center">Client Insurance</h1>
-                            <Button className="d-flex justify-content-around" disabled={btnSpinnerShow} type="button"
+                            <Button className="d-flex justify-content-around" onClick={save} disabled={btnSpinnerShow} type="button"
                                     variant="success"
                                     size="lg">
                                 {btnSpinnerShow ?
@@ -49,17 +60,39 @@ const InsuranceAdd = observer(() => {
                     <div className="border border-secondary p-md-4 mt-4 ">
                         <Row className="justify-content-md-center">
                             <Col>
-                                <InputFormPatient value={Order.object.insurance} id="insurance" title="Insurance Company"/>
+                                <Form.Group className="mb-3">
+                                    <Form.Label>Insurance Company</Form.Label>
+                                    <Form.Control type="text" placeholder="Insurance" value={nameInsurance}
+                                                  onChange={(obj) => {
+                                                      setNameInsurance(obj.target.value)
+                                                  }}/>
+                                </Form.Group>
                             </Col>
                             <Col>
-                                <InputFormPatient value={Order.object.policy} id="policy" title="Insurance Policy Number"/>
+                                <Form.Group className="mb-3">
+                                    <Form.Label>Insurance Policy Number</Form.Label>
+                                    <Form.Control type="text" placeholder="Policy Number" value={policy}
+                                                  onChange={(obj) => {
+                                                      setPolicy(obj.target.value)
+                                                  }}/>
+                                </Form.Group>
                             </Col>
                         </Row>
-                        </div>
+                        <Row>
+                            <Col>
+                                <Form.Check
+                                    type="checkbox"
+                                    id="add-insurance"
+                                    label="Check if use primary insurance"
+                                    onChange={(e) => Order.edit(Order.object.primary, e.target.checked)}
+                                />
+                            </Col>
+                        </Row>
+                    </div>
                 </Container>
             </div>
 
-)
+    )
 })
 
 export default InsuranceAdd

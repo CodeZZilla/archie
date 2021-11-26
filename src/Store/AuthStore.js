@@ -4,8 +4,9 @@ import commonStore from './CommonStore';
 import {makeAutoObservable} from "mobx";
 
 class AuthStore {
-    inProgress = false;
-    errors = undefined;
+    inProgress = false
+    errors = undefined
+    currentUser = undefined
 
     values = {
         username: '',
@@ -40,7 +41,7 @@ class AuthStore {
         this.errors = undefined;
         return Backendless.UserService.login(this.values.email, this.values.password, true)
             .then((loggedInUser) => {
-                console.log(loggedInUser)
+                this.currentUser = loggedInUser
                 commonStore.setToken(loggedInUser['user-token']+"___"+loggedInUser['RoleTmp'])
             })
             .then(() => userStore.pullUser())

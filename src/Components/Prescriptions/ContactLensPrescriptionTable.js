@@ -11,15 +11,9 @@ export default function ContactLensPrescriptionTable() {
 
     useEffect(async () => {
         let data = await Backendless.Data.of('ContactLensPrescription').find({})
-        for await (let item of data) {
-            let clientObject = await Backendless.Data.of('Client').findById(item.client)
-            let doctorObject = await Backendless.Data.of('Users').findById(item.doctor)
-            item.client = clientObject
-            item.doctor = doctorObject
-        }
         setMyData(data)
         setIsLoading(false)
-    })
+    },[])
 
     return (
         isLoading ?
@@ -52,9 +46,10 @@ export default function ContactLensPrescriptionTable() {
                                 {myData.length > 0 ? myData.map((value, index)=>
                                     <tr key={value.objectId}>
                                         <td>{index + 1}</td>
-                                        <td>{value.client.first_name} {value.client.last_name}</td>
+                                        <td className="text-danger">in progress</td>
+                                        {/*<td>{value.client.first_name} {value.client.last_name}</td>*/}
                                         <td>{value.prescription_date}</td>
-                                        <td>{value.doctor.first_name} {value.doctor.last_name}</td>
+                                        <td>{value.doctor}</td>
                                         <td>
                                             <NavLink className="w-75 btn btn-primary"
                                                      to={'/contact-lens-prescription-item/' + value.objectId}>

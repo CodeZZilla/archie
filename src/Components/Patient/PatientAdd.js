@@ -13,7 +13,7 @@ import AlertStatus from "../../Store/AlertStatus";
 import Loader from "../Main/Loader";
 
 
-const PatientAdd = observer(({title, btnText, patient, indexPatient, fun}) => {
+const PatientAdd = observer(({title, btnText, patient, indexPatient, fun = null}) => {
     const [isLoading, setIsLoading] = useState(true)
     const [btnSpinnerShow, setBtnSpinnerShow] = useState(false)
     const [users, setUsers] = useState([])
@@ -25,7 +25,7 @@ const PatientAdd = observer(({title, btnText, patient, indexPatient, fun}) => {
             let users = await Backendless.Data.of('Users').find({})
             setUsers(users)
             setIsLoading(false)
-        }catch (error){
+        } catch (error) {
             AlertStatus.setStatus(true)
             AlertStatus.setTitle("Oh snap! You got an error!")
             AlertStatus.setMsg(error.message)
@@ -38,12 +38,14 @@ const PatientAdd = observer(({title, btnText, patient, indexPatient, fun}) => {
             setBtnSpinnerShow(true)
             e.preventDefault()
             let patient = await Backendless.Data.of("Client").save(Patient.object)
-            for await (let file of FilesClientAdd.getFiles()){
+            for await (let file of FilesClientAdd.getFiles()) {
                 await Backendless.Files.upload(file.file, `patientData/patient-${patient.objectId}`, true)
             }
             AlertStatus.setAll(true, "Done", "Patient was added successful!", "success")
-            await fun()
-        }catch (error){
+            if (fun != null) {
+                await fun()
+            }
+        } catch (error) {
             AlertStatus.setAll(true, "Oh snap! You got an error!", error.message, "danger")
         } finally {
             Patient.reset()
@@ -73,8 +75,9 @@ const PatientAdd = observer(({title, btnText, patient, indexPatient, fun}) => {
                     </Row>
                     <Row>
                         <Col className="d-flex justify-content-between">
-                            <h1 className="text-center">Add PatientStore</h1>
-                            <Button className="d-flex justify-content-around" disabled={btnSpinnerShow} type="button" variant="success"
+                            <h1 className="text-center">Add Patient</h1>
+                            <Button className="d-flex justify-content-around" disabled={btnSpinnerShow} type="button"
+                                    variant="success"
                                     onClick={save} size="lg">
                                 {btnSpinnerShow ?
                                     <Spinner
@@ -91,14 +94,16 @@ const PatientAdd = observer(({title, btnText, patient, indexPatient, fun}) => {
                     <div className="border border-secondary p-md-4 mt-4 ">
                         <Row className="justify-content-md-center">
                             <Col>
-                                <InputForm value={Patient.object.last_name} id="last_name" title="Last name" myKey="Patient"/>
+                                <InputForm value={Patient.object.last_name} id="last_name" title="Last name"
+                                           myKey="Patient"/>
                             </Col>
                             <Col>
-                                <InputForm value={Patient.object.first_name} id="first_name" title="First name" myKey="Patient"/>
+                                <InputForm value={Patient.object.first_name} id="first_name" title="First name"
+                                           myKey="Patient"/>
                             </Col>
                             <Col>
                                 <InputForm value={Patient.object.middle_name} id="middle_name"
-                                                  title="Middle name" myKey="Patient"/>
+                                           title="Middle name" myKey="Patient"/>
                             </Col>
                             <Col>
                                 <InputForm value={Patient.object.title} id="title" title="Title" myKey="Patient"/>

@@ -59,12 +59,12 @@ const Header = ({role}) => {
                                 <LinkContainer to="/inventory">
                                     <Nav.Link>Inventory</Nav.Link>
                                 </LinkContainer>
-                                <NavDropdown title="Orders" id="prescription-dropdown">
+                                <NavDropdown title="Orders" id="order-dropdown">
                                     <LinkContainer to="/order-add">
                                         <NavDropdown.Item>Create new order</NavDropdown.Item>
                                     </LinkContainer>
                                 </NavDropdown>
-                                <NavDropdown title="Patients" id="patiens-dropdown">
+                                <NavDropdown title="Patients" id="patient-dropdown">
                                     <LinkContainer to="/new-patient">
                                         <NavDropdown.Item>Add patient</NavDropdown.Item>
                                     </LinkContainer>
@@ -87,6 +87,11 @@ const Header = ({role}) => {
                                     </LinkContainer>
                                     <LinkContainer to="/contact-lens-prescription-table">
                                         <NavDropdown.Item>List</NavDropdown.Item>
+                                    </LinkContainer>
+                                </NavDropdown>
+                                <NavDropdown title="Product" id="product-dropdown">
+                                    <LinkContainer to="/product-add">
+                                        <NavDropdown.Item>Add</NavDropdown.Item>
                                     </LinkContainer>
                                 </NavDropdown>
                             </Nav>

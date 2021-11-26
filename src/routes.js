@@ -16,6 +16,7 @@ import LocationAddEdit from "./Components/Location/LocationAddEdit";
 import LocationList from "./Components/Location/LocationList";
 import CompanyItem from "./Components/Company/CompanyItem";
 import InventoryHome from "./Components/Inventory/InventoryHome";
+import ProductAdd from "./Components/Product/ProductAdd";
 
 
 export const useRoutes = (userType) => {
@@ -89,6 +90,9 @@ export const useRoutes = (userType) => {
                         </Route>
                         <Route path='/inventory'>
                             <InventoryHome/>
+                        </Route>
+                        <Route path='/product-add'>
+                            <ProductAdd/>
                         </Route>
                     </Switch>
                 </div>

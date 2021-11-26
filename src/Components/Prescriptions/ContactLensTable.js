@@ -1,15 +1,30 @@
 import {observer} from "mobx-react-lite";
 import {Col, Container, Form, Row, Table} from "react-bootstrap";
 import ContactLensPrescription from "../../Store/ContactLensPrescription";
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
+import Order from "../../Store/Order";
+import {findObjectByObjectId} from "../../Business/BackendlessRequest";
 
-const ContactLensTable = observer(() => {
+const ContactLensTable = observer(({addFlag = false}) => {
+    const [flagDisable, setFlagDisable] = useState(true)
 
-    useEffect(() => {
-        console.log("fdsf")
-    })
+    useEffect(async () => {
+        if (!addFlag) {
+            ContactLensPrescription.reset()
+        }
+    }, [])
 
-    return(
+    useEffect(async () =>{
+        if (Order.contactLensPrescriptionId !== 'Unselected'){
+            ContactLensPrescription.create(await findObjectByObjectId("ContactLensPrescription", Order.contactLensPrescriptionId))
+            setFlagDisable(true)
+        }else {
+            ContactLensPrescription.reset()
+            setFlagDisable(false)
+        }
+    }, [Order.contactLensPrescriptionId])
+
+    return (
         <div className="border border-secondary p-2 mb-5">
             <Row className="mt-3 justify-content-md-around">
                 <Col className="col-5">
@@ -20,7 +35,7 @@ const ContactLensTable = observer(() => {
                                 Right (OD)
                             </th>
                             <td className="col">
-                                <Form.Control value={ContactLensPrescription.object.pwr_right}
+                                <Form.Control value={ContactLensPrescription.object.pwr_right} disabled={flagDisable}
                                               onChange={(obj) => ContactLensPrescription.edit('pwr_right', obj.target.value)}/>
                             </td>
                         </tr>
@@ -30,7 +45,7 @@ const ContactLensTable = observer(() => {
                                 (OD)
                             </th>
                             <td className="col">
-                                <Form.Control value={ContactLensPrescription.object.cyl_right}
+                                <Form.Control value={ContactLensPrescription.object.cyl_right} disabled={flagDisable}
                                               onChange={(obj) => ContactLensPrescription.edit('cyl_right', obj.target.value)}/>
                             </td>
                         </tr>
@@ -40,7 +55,7 @@ const ContactLensTable = observer(() => {
                                 (OD)
                             </th>
                             <td className="col">
-                                <Form.Control value={ContactLensPrescription.object.axis_right}
+                                <Form.Control value={ContactLensPrescription.object.axis_right} disabled={flagDisable}
                                               onChange={(obj) => ContactLensPrescription.edit('axis_right', obj.target.value)}/>
                             </td>
                         </tr>
@@ -50,7 +65,7 @@ const ContactLensTable = observer(() => {
                                 (OD)
                             </th>
                             <td className="col">
-                                <Form.Control value={ContactLensPrescription.object.bc_right}
+                                <Form.Control value={ContactLensPrescription.object.bc_right} disabled={flagDisable}
                                               onChange={(obj) => ContactLensPrescription.edit('bc_right', obj.target.value)}/>
                             </td>
                         </tr>
@@ -60,7 +75,7 @@ const ContactLensTable = observer(() => {
                                 (OD)
                             </th>
                             <td className="col">
-                                <Form.Control value={ContactLensPrescription.object.dia_right}
+                                <Form.Control value={ContactLensPrescription.object.dia_right} disabled={flagDisable}
                                               onChange={(obj) => ContactLensPrescription.edit('dia_right', obj.target.value)}/>
                             </td>
                         </tr>
@@ -70,7 +85,7 @@ const ContactLensTable = observer(() => {
                                 (OD)
                             </th>
                             <td className="col">
-                                <Form.Control value={ContactLensPrescription.object.add_right}
+                                <Form.Control value={ContactLensPrescription.object.add_right} disabled={flagDisable}
                                               onChange={(obj) => ContactLensPrescription.edit('add_right', obj.target.value)}/>
                             </td>
                         </tr>
@@ -86,7 +101,7 @@ const ContactLensTable = observer(() => {
                                 (OS)
                             </th>
                             <td className="col">
-                                <Form.Control value={ContactLensPrescription.object.pwr_left}
+                                <Form.Control value={ContactLensPrescription.object.pwr_left} disabled={flagDisable}
                                               onChange={(obj) => ContactLensPrescription.edit('pwr_left', obj.target.value)}/>
                             </td>
                         </tr>
@@ -96,7 +111,7 @@ const ContactLensTable = observer(() => {
                                 (OS)
                             </th>
                             <td className="col">
-                                <Form.Control value={ContactLensPrescription.object.cyl_left}
+                                <Form.Control value={ContactLensPrescription.object.cyl_left} disabled={flagDisable}
                                               onChange={(obj) => ContactLensPrescription.edit('cyl_left', obj.target.value)}/>
                             </td>
                         </tr>
@@ -106,7 +121,7 @@ const ContactLensTable = observer(() => {
                                 (OS)
                             </th>
                             <td className="col">
-                                <Form.Control value={ContactLensPrescription.object.axis_left}
+                                <Form.Control value={ContactLensPrescription.object.axis_left} disabled={flagDisable}
                                               onChange={(obj) => ContactLensPrescription.edit('axis_left', obj.target.value)}/>
                             </td>
                         </tr>
@@ -116,7 +131,7 @@ const ContactLensTable = observer(() => {
                                 (OS)
                             </th>
                             <td className="col">
-                                <Form.Control value={ContactLensPrescription.object.bc_left}
+                                <Form.Control value={ContactLensPrescription.object.bc_left} disabled={flagDisable}
                                               onChange={(obj) => ContactLensPrescription.edit('bc_left', obj.target.value)}/>
                             </td>
                         </tr>
@@ -126,7 +141,7 @@ const ContactLensTable = observer(() => {
                                 (OS)
                             </th>
                             <td className="col">
-                                <Form.Control value={ContactLensPrescription.object.dia_left}
+                                <Form.Control value={ContactLensPrescription.object.dia_left} disabled={flagDisable}
                                               onChange={(obj) => ContactLensPrescription.edit('dia_left', obj.target.value)}/>
                             </td>
                         </tr>
@@ -136,7 +151,7 @@ const ContactLensTable = observer(() => {
                                 (OS)
                             </th>
                             <td className="col">
-                                <Form.Control value={ContactLensPrescription.object.add_left}
+                                <Form.Control value={ContactLensPrescription.object.add_left} disabled={flagDisable}
                                               onChange={(obj) => ContactLensPrescription.edit('add_left', obj.target.value)}/>
                             </td>
                         </tr>
@@ -164,19 +179,19 @@ const ContactLensTable = observer(() => {
                         </tr>
                         <tr className="row">
                             <td className="col">
-                                <Form.Control value={ContactLensPrescription.object.contact_desing}
+                                <Form.Control value={ContactLensPrescription.object.contact_desing} disabled={flagDisable}
                                               onChange={(obj) => ContactLensPrescription.edit('contact_desing', obj.target.value)}/>
                             </td>
                             <td className="col">
-                                <Form.Control value={ContactLensPrescription.object.lens_type}
+                                <Form.Control value={ContactLensPrescription.object.lens_type} disabled={flagDisable}
                                               onChange={(obj) => ContactLensPrescription.edit('lens_type', obj.target.value)}/>
                             </td>
                             <td className="col">
-                                <Form.Control value={ContactLensPrescription.object.lens_brand}
+                                <Form.Control value={ContactLensPrescription.object.lens_brand} disabled={flagDisable}
                                               onChange={(obj) => ContactLensPrescription.edit('lens_brand', obj.target.value)}/>
                             </td>
                             <td className="col">
-                                <Form.Control value={ContactLensPrescription.object.lens_model}
+                                <Form.Control value={ContactLensPrescription.object.lens_model} disabled={flagDisable}
                                               onChange={(obj) => ContactLensPrescription.edit('lens_model', obj.target.value)}/>
                             </td>
                         </tr>
@@ -194,15 +209,15 @@ const ContactLensTable = observer(() => {
                         </tr>
                         <tr className="row">
                             <td className="col">
-                                <Form.Control value={ContactLensPrescription.object.lens_color}
+                                <Form.Control value={ContactLensPrescription.object.lens_color} disabled={flagDisable}
                                               onChange={(obj) => ContactLensPrescription.edit('lens_color', obj.target.value)}/>
                             </td>
                             <td className="col" colSpan={2}>
-                                <Form.Control value={ContactLensPrescription.object.lens_modality}
+                                <Form.Control value={ContactLensPrescription.object.lens_modality} disabled={flagDisable}
                                               onChange={(obj) => ContactLensPrescription.edit('lens_modality', obj.target.value)}/>
                             </td>
                             <td className="col">
-                                <Form.Control value={ContactLensPrescription.object.lens_disinfection}
+                                <Form.Control value={ContactLensPrescription.object.lens_disinfection} disabled={flagDisable}
                                               onChange={(obj) => ContactLensPrescription.edit('lens_disinfection', obj.target.value)}/>
                             </td>
                         </tr>
