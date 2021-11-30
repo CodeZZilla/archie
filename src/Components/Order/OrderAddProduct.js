@@ -1,14 +1,29 @@
 import {observer} from "mobx-react-lite";
-import React, {useEffect, useState} from "react";
-import {Button, Col, Container, Form, Modal, Row, Spinner, Table} from "react-bootstrap";
-import BootstrapTable from 'react-bootstrap-table-next';
-import cellEditFactory, {Type} from 'react-bootstrap-table2-editor';
-import PatientAdd from "../Patient/PatientAdd";
+import React, {Fragment, useEffect, useState} from "react";
+import {
+    Button,
+    ButtonGroup,
+    Col,
+    Container, DropdownButton, Dropdown,
+    Form,
+    Modal,
+    OverlayTrigger,
+    Row,
+    Spinner,
+    Table,
+    Tooltip, InputGroup, FormControl
+} from "react-bootstrap";
 import {getAllObject} from "../../Business/BackendlessRequest";
 import Product from "../../Store/Product";
-import ProductAdd from "../Product/ProductAdd";
-import Order from "../../Store/Order";
-
+import {Highlighter, Typeahead} from "react-bootstrap-typeahead";
+import {
+    AiTwotoneDelete,
+    FaBeer,
+    HiOutlineDotsCircleHorizontal,
+    IoIosRemoveCircleOutline,
+    IoMdRemoveCircle
+} from "react-icons/all";
+import OrderProducts from "../../Store/OrderProducts";
 
 const OrderAddProduct = observer(() => {
     const [allProduct, setAllProduct] = useState([])
@@ -16,45 +31,32 @@ const OrderAddProduct = observer(() => {
     const [showModalAddProduct, setShowModalAddProduct] = useState(false)
     const [showModalAddProductInOrder, setShowModalAddProductInOrder] = useState(false)
     const [modalTmpProduct, setModalTmpProduct] = useState({})
+    const [products, setProducts] = useState([])
 
-    const columns = [{
-        dataField: 'item',
-        text: 'Product',
-        headerAlign: (column, colIndex) => 'left',
-    }, {
-        dataField: 'quantity',
-        text: 'Quantity'
-    }, {
-        dataField: 'price',
-        text: 'Price'
-    }, {
-        dataField: 'discount',
-        text: 'Discount'
-    }];
 
     useEffect(async () => {
         setAllProduct(await getAllObject('Product'))
         setIsLoading(false)
     }, [])
 
-    let products = [
-        {
-            item: "2",
-            quantity: "100",
-            price: "200$",
-            discount: "100%"
-        }
-    ]
 
     let addProductInOrderEvent = () => {
-        products.push({
-            item: modalTmpProduct.product_name,
-            quantity: '1',
-            price: modalTmpProduct.price_each,
-            discount: "0%"
-        })
         setShowModalAddProductInOrder(false)
     }
+
+    let renderItems = (option, {text}) => (
+        <Fragment>
+            <Highlighter search={text}>
+                {option.name}
+            </Highlighter>,
+            <div>
+                <small>
+                    SKU: {option.sku} Rate: {option.rate}
+                </small>
+            </div>
+        </Fragment>
+
+    )
 
     return (
         isLoading ?
@@ -68,78 +70,191 @@ const OrderAddProduct = observer(() => {
                     </Row>
                 </Container>
             </div> :
-            <div className="mt-5">
+            <div className="mt-3">
                 <Container>
-                    <Row className="mb-4 justify-content-md-center">
-                        <Button className="col-4 m-2" variant="outline-dark"
-                                onClick={() => setShowModalAddProductInOrder(true)}>
-                            Add product in order
-                        </Button>
-                        <Button className="col-4 m-2" variant="outline-dark"
-                                onClick={() => setShowModalAddProduct(true)}>
-                            Add new product
-                        </Button>
-                        <Modal
-                            show={showModalAddProductInOrder}
-                            onHide={() => setShowModalAddProductInOrder(false)}
-                            dialogClassName="w-75"
-                            size="md"
-                            aria-labelledby="example-custom-modal-styling-title">
-                            <Modal.Header closeButton/>
-                            <Modal.Body>
-                                <Row>
-                                    <Col className="col-12">
-                                        <h3>Add product in order</h3>
-                                    </Col>
-                                    <Col className="col-12">
-                                        <Form.Select className="me-sm-2" value={modalTmpProduct}
-                                                     onChange={(obj) => setModalTmpProduct(obj.target.value)}>
-                                            <option value={null}>Unselected</option>
-                                            {
-                                                allProduct.map(value => {
-                                                    return <option key={value.objectId}
-                                                                   value={value.objectId}>{value.product_name}</option>
-                                                })
-                                            }
-                                        </Form.Select>
-                                    </Col>
-                                    <Col className="col-6">
-                                        <Button className="col-4 m-2" variant="outline-dark"
-                                                onClick={addProductInOrderEvent}>
-                                            Add
-                                        </Button>
-                                    </Col>
-                                </Row>
-                            </Modal.Body>
-                        </Modal>
+                    <Row>
+                        <Table striped bordered hover>
+                            <thead>
+                            <tr className="row">
+                                <th className="text-start col-5">Item Details</th>
+                                <th className="text-center col-1">Quantity</th>
+                                <th className="text-center col-1">Rate</th>
+                                <th className="text-center col-2">Discount</th>
+                                <th className="text-center col-1">Amount</th>
+                                <th className="text-center col-2">Action</th>
+                            </tr>
+                            </thead>
+                            <tbody>
 
-                        <Modal
-                            show={showModalAddProduct}
-                            onHide={() => setShowModalAddProduct(false)}
-                            dialogClassName="w-75"
-                            size="xl"
-                            aria-labelledby="example-custom-modal-styling-title">
-                            <Modal.Header closeButton/>
-                            <Modal.Body>
-                                <ProductAdd/>
-                                {/*<PatientAdd btnText="Save" fun={async () => {
-                                    setShowModalAddProduct(false)
-                                    setClients(await getAllObject('Client'))
-                                }}/>*/}
-                            </Modal.Body>
-                        </Modal>
+                            {
+                                Array.from(OrderProducts.array).map(((value, index) => {
+                                    return <tr className="row">
+                                        <td className="col-5">
+                                            <Typeahead renderMenuItemChildren={renderItems}
+                                                       id="rendering-example"
+                                                       labelKey="info"
+                                                       onChange={(obj) => {
+                                                           OrderProducts.edit(index, 'itemDetails', obj[0])
+                                                       }}
+                                                       options={[
+                                                           {
+                                                               name: "Item 0",
+                                                               sku: "SKU 0",
+                                                               quantity: "20",
+                                                               rate: "2100",
+                                                               info: "Item 0 (SKU 0, 2100)"
+                                                           },
+                                                           {
+                                                               name: "Item 1",
+                                                               sku: "SKU 1",
+                                                               quantity: "25",
+                                                               rate: "1234",
+                                                               info: "Item 1 (SKU 1, 1234)"
+                                                           }
+                                                       ]}
+                                                       selected={OrderProducts.array[index].itemDetails !== null ? [OrderProducts.array[index].itemDetails] : []}
+                                                       placeholder="Choose a item..."/>
+
+                                        </td>
+                                        <td className="col-1">
+                                            <Form.Control className="text-end"
+                                                          value={OrderProducts.array[index].quantity}
+                                                          type="text"/>
+                                        </td>
+                                        <td className="col-1">
+                                            <Form.Control className="text-end" value={OrderProducts.array[index].rate}
+                                                          type="text"/>
+                                        </td>
+                                        <td className="col-2 d-flex">
+                                            <Form.Control className="text-end"
+                                                          value={OrderProducts.array[index].discount}
+                                                          onChange={(e) => OrderProducts.edit(index, 'discount', e.target.value)}
+                                                          type="text"/>
+                                            <Form.Select aria-label="Discount"
+                                                         value={OrderProducts.array[index].discountTag}
+                                                         onChange={(e) => OrderProducts.edit(index, 'discountTag', e.target.value)}>
+                                                <option value="$" selected>$</option>
+                                                <option value="%">%</option>
+                                            </Form.Select>
+                                        </td>
+                                        <td className="col-1">
+                                            <p className="text-center">{OrderProducts.array[index].amount}$</p>
+                                        </td>
+                                        <td className="col-2 d-flex justify-content-around">
+                                            <Dropdown>
+                                                <Dropdown.Toggle variant="outline-primary">
+                                                    More
+                                                </Dropdown.Toggle>
+                                                <Dropdown.Menu>
+                                                    <Dropdown.Item>
+                                                        Add Additional Information
+                                                    </Dropdown.Item>
+                                                    <Dropdown.Item onClick={() => OrderProducts.cloneItem(index)}>
+                                                        Clone
+                                                    </Dropdown.Item>
+                                                </Dropdown.Menu>
+                                            </Dropdown>
+                                            <Button variant="outline-danger"
+                                                    onClick={() => OrderProducts.removeRow(index)}>Delete</Button>
+                                        </td>
+                                    </tr>
+                                }))
+                            }
+                            </tbody>
+                        </Table>
                     </Row>
-                    <BootstrapTable
-                        keyField="id"
-                        data={products}
-                        columns={columns}
-                        noDataIndication="Table is Empty"
-                        cellEdit={cellEditFactory({mode: 'click', blurToSave: true})}
-                    />
-
-                    <Button className="col-4" variant="outline-dark" onClick={() => console.log(products)}>
-                        save
-                    </Button>
+                    <Row className="mt-3">
+                        <Col className="text-start mb-3">
+                            <Col className="col-12 text-start mb-5">
+                                <ButtonGroup>
+                                    <Button onClick={() => OrderProducts.addRow()}>Add another line</Button>
+                                    <DropdownButton as={ButtonGroup} id="bg-nested-dropdown">
+                                        <Dropdown.Item eventKey="1">Add Items In Bulk</Dropdown.Item>
+                                        <Dropdown.Item eventKey="2">Add Item Header</Dropdown.Item>
+                                    </DropdownButton>
+                                </ButtonGroup>
+                            </Col>
+                            <Form.Group>
+                                <Form.Label>Client Notes</Form.Label>
+                                <Form.Control as="textarea" rows={3} placeholder="Notes user"/>
+                            </Form.Group>
+                            <Form.Check
+                                inline
+                                label="Use this in future."
+                                name="group1"
+                                type="checkbox"
+                                id="checkbox-1"
+                            />
+                        </Col>
+                        <Col className="col-6 p-2 bg-light">
+                            <Row className="m-2">
+                                <Row className="mb-3">
+                                    <Col className="col-8 text-start">Sub Total</Col>
+                                    <Col className="col-4 text-end">2570.400</Col>
+                                </Row>
+                                <Row className="mb-3">
+                                    <Col className="col-4 text-start text-nowrap">Shipping Charges</Col>
+                                    <Col className="col-4">
+                                        <Row>
+                                            <Col className="col-10">
+                                                <Form.Control type="text"/>
+                                            </Col>
+                                            <Col className="col-2 align-self-center">
+                                                <OverlayTrigger overlay={<Tooltip>
+                                                    Add any other +ve or -ve charges
+                                                    that need to be applied to adjust the total amount of the
+                                                    transaction
+                                                    Eg. +10 or -10.</Tooltip>}>
+                                                    <svg version="1.1" width={20} height={20} id="Layer_1"
+                                                         xmlns="http://www.w3.org/2000/svg" x="0"
+                                                         y="0" viewBox="0 0 512 512"
+                                                         className="icon icon-sm align-text-bottom text-muted cursor-pointer">
+                                                        <path
+                                                            d="M317.1 147.5c-15.1-13.8-35.5-20.8-60.5-20.8-23.7 0-43.1 6.5-57.7 19.4-14.6 12.9-23.5 31.5-26.4 55.5l-.6 4.9 40.4 4.8.7-4.6c2.5-15.8 7.7-27.5 15.4-34.7 7.7-7.2 17.1-10.7 28.7-10.7 12 0 21.9 3.9 30.1 11.9 8.2 8 12.2 16.9 12.2 27.3 0 5.6-1.3 10.7-4 15.4-2.8 4.9-9.3 11.9-19.3 20.7-10.7 9.4-17.9 16.5-22.1 21.5-5.8 7-10 14-12.6 20.8-3.5 9.1-5.3 19.9-5.3 32.3 0 2.1.1 5.1.2 9l.1 4.7h38.4l.1-4.8c.3-14.3 1.4-21.4 2.3-24.7 1.3-4.7 3.2-8.8 5.9-12.5 2.8-3.8 9-10 18.5-18.4 15.1-13.4 25.1-24.6 30.4-34.2 5.4-9.7 8.1-20.4 8.1-31.9 0-19.9-7.7-37-23-50.9zM256.3 385.3c12.1 0 22-9.8 22-22 0-12.1-9.8-22-22-22-12.1 0-22 9.8-22 22s9.8 22 22 22z"></path>
+                                                        <path
+                                                            d="M437.4 74.6C388.9 26.1 324.5-.5 256-.5S123.1 26.2 74.6 74.6C26.1 123.1-.5 187.5-.5 256s26.7 132.9 75.1 181.4c48.5 48.5 112.9 75.1 181.4 75.1s132.9-26.7 181.4-75.1c48.5-48.5 75.1-112.9 75.1-181.4s-26.6-132.9-75.1-181.4zm-22.6 340.2c-42.4 42.4-98.8 65.8-158.8 65.8s-116.4-23.4-158.8-65.8C54.8 372.4 31.5 316 31.5 256S54.8 139.6 97.2 97.2C139.6 54.8 196 31.5 256 31.5s116.4 23.4 158.8 65.8c42.4 42.4 65.8 98.8 65.8 158.8s-23.4 116.3-65.8 158.7z"></path>
+                                                    </svg>
+                                                </OverlayTrigger>
+                                            </Col>
+                                        </Row>
+                                    </Col>
+                                    <Col className="col-4 text-end">2570.400</Col>
+                                </Row>
+                                <Row className="mb-3">
+                                    <Col className="col-4">
+                                        <Form.Control type="text"/>
+                                    </Col>
+                                    <Col className="col-4">
+                                        <Row>
+                                            <Col className="col-10">
+                                                <Form.Control type="text"/>
+                                            </Col>
+                                            <Col className="col-2 align-self-center">
+                                                <OverlayTrigger overlay={<Tooltip>
+                                                    Add any other +ve or -ve charges that need to be applied to adjust
+                                                    the total amount of the transaction Eg. +10 or -10.</Tooltip>}>
+                                                    <svg version="1.1" width={20} height={20} id="Layer_1"
+                                                         xmlns="http://www.w3.org/2000/svg" x="0"
+                                                         y="0" viewBox="0 0 512 512"
+                                                         className="icon icon-sm align-text-bottom text-muted cursor-pointer">
+                                                        <path
+                                                            d="M317.1 147.5c-15.1-13.8-35.5-20.8-60.5-20.8-23.7 0-43.1 6.5-57.7 19.4-14.6 12.9-23.5 31.5-26.4 55.5l-.6 4.9 40.4 4.8.7-4.6c2.5-15.8 7.7-27.5 15.4-34.7 7.7-7.2 17.1-10.7 28.7-10.7 12 0 21.9 3.9 30.1 11.9 8.2 8 12.2 16.9 12.2 27.3 0 5.6-1.3 10.7-4 15.4-2.8 4.9-9.3 11.9-19.3 20.7-10.7 9.4-17.9 16.5-22.1 21.5-5.8 7-10 14-12.6 20.8-3.5 9.1-5.3 19.9-5.3 32.3 0 2.1.1 5.1.2 9l.1 4.7h38.4l.1-4.8c.3-14.3 1.4-21.4 2.3-24.7 1.3-4.7 3.2-8.8 5.9-12.5 2.8-3.8 9-10 18.5-18.4 15.1-13.4 25.1-24.6 30.4-34.2 5.4-9.7 8.1-20.4 8.1-31.9 0-19.9-7.7-37-23-50.9zM256.3 385.3c12.1 0 22-9.8 22-22 0-12.1-9.8-22-22-22-12.1 0-22 9.8-22 22s9.8 22 22 22z"></path>
+                                                        <path
+                                                            d="M437.4 74.6C388.9 26.1 324.5-.5 256-.5S123.1 26.2 74.6 74.6C26.1 123.1-.5 187.5-.5 256s26.7 132.9 75.1 181.4c48.5 48.5 112.9 75.1 181.4 75.1s132.9-26.7 181.4-75.1c48.5-48.5 75.1-112.9 75.1-181.4s-26.6-132.9-75.1-181.4zm-22.6 340.2c-42.4 42.4-98.8 65.8-158.8 65.8s-116.4-23.4-158.8-65.8C54.8 372.4 31.5 316 31.5 256S54.8 139.6 97.2 97.2C139.6 54.8 196 31.5 256 31.5s116.4 23.4 158.8 65.8c42.4 42.4 65.8 98.8 65.8 158.8s-23.4 116.3-65.8 158.7z"></path>
+                                                    </svg>
+                                                </OverlayTrigger>
+                                            </Col>
+                                        </Row>
+                                    </Col>
+                                    <Col className="col-4 text-end">2570.400</Col>
+                                </Row>
+                                <Row className="mb-3">
+                                    <Col className="col-6 text-start h6">Total ( $ )</Col>
+                                    <Col className="col-6 text-end h6">2693.400</Col>
+                                </Row>
+                            </Row>
+                        </Col>
+                    </Row>
                 </Container>
             </div>
     )

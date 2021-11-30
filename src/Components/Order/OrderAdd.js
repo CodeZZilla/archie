@@ -50,6 +50,7 @@ const OrderAdd = observer(() => {
         {name: 'Spectacles', value: 'Spectacles'},
         {name: 'Contacts', value: 'Contacts'},
         {name: 'Both', value: 'Both'},
+        {name: 'Other', value: 'Other'}
     ];
 
     useEffect(async () => {
@@ -156,12 +157,6 @@ const OrderAdd = observer(() => {
                                         </Modal.Body>
                                     </Modal>
                                 </div>
-                            </Form.Group>
-                        </Col>
-                        <Col className="col-3">
-                            <Form.Group className="mb-3">
-                                <Form.Label>Doctor</Form.Label>
-                                <Form.Control type="text" placeholder="John Doe"/>
                             </Form.Group>
                         </Col>
                         <Row className="mt-1 mb-1 justify-content-md-around">

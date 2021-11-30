@@ -50,7 +50,7 @@ const InsuranceForm = observer(({fun}) => {
                     <Form.Group className="mb-3 w-100" controlId="hobbies">
                         <Form.Label>Insurance</Form.Label>
                         <div className="d-flex">
-                            <Select  isMulti className="m-2 w-100" options={insurance} onChange={(array)=>Order.edit("selectedInsurance",array)}  />
+                            <Select  isMulti className="m-2 w-75" options={insurance} onChange={(array)=>Order.edit("selectedInsurance",array)}  />
                             <Button className="m-2" variant="outline-primary" onClick={() => setShow(true)}>Add</Button>
                             <Modal
                                 show={show}
@@ -83,6 +83,12 @@ const InsuranceForm = observer(({fun}) => {
                             </Form.Select>
                         </div>
                     </Form.Group>*/}
+                </Col>
+                <Col className="col-3 m-2">
+                    <Form.Group className="mb-3">
+                        <Form.Label>Doctor</Form.Label>
+                        <Form.Control type="text" placeholder="John Doe"/>
+                    </Form.Group>
                 </Col>
             </Row>
     )
