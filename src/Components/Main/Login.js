@@ -45,7 +45,7 @@ const Login = observer(() => {
                             <Form.Control type="password" placeholder="Password" value={AuthStore.values.password}
                                           onChange={(e) => AuthStore.setPassword(e.target.value)}/>
                         </Form.Group>
-                        <Button className="mt-4 col-6" type="submit" size="lg">Sing in</Button>
+                        <Button className="mt-4 col-6" type="submit" size="lg">Sign in</Button>
                     </Form>
                 </Col>
             </Row>
