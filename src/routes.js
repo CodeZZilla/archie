@@ -17,6 +17,7 @@ import LocationList from "./Components/Location/LocationList";
 import CompanyItem from "./Components/Company/CompanyItem";
 import InventoryHome from "./Components/Inventory/InventoryHome";
 import ProductAdd from "./Components/Product/ProductAdd";
+import AddItem from "./Components/Item/AddItem";
 
 
 export const useRoutes = (userType) => {
@@ -93,6 +94,9 @@ export const useRoutes = (userType) => {
                         </Route>
                         <Route path='/product-add'>
                             <ProductAdd/>
+                        </Route>
+                        <Route path='/item-add'>
+                            <AddItem/>
                         </Route>
                     </Switch>
                 </div>

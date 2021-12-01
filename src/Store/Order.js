@@ -3,7 +3,7 @@ import {getRelObjectDepth1} from "../Business/BackendlessRequest";
 
 class Order {
     object = {
-        date: null,
+        date: new Date(),
         client: null,
         location: null,
         doctor: null,
@@ -71,11 +71,13 @@ class Order {
 
     reset() {
         this.object = {
-            date: null,
+            date: new Date(),
             client: null,
             location: null,
             doctor: null,
-            policy: null
+            policy: null,
+            primary:null,
+            selectedInsurance:[]
         }
     }
 

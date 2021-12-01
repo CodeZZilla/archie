@@ -24,6 +24,7 @@ import {
     IoMdRemoveCircle
 } from "react-icons/all";
 import OrderProducts from "../../Store/OrderProducts";
+import AddItem from "../Item/AddItem";
 
 const OrderAddProduct = observer(() => {
     const [allProduct, setAllProduct] = useState([])
@@ -32,11 +33,13 @@ const OrderAddProduct = observer(() => {
     const [showModalAddProductInOrder, setShowModalAddProductInOrder] = useState(false)
     const [modalTmpProduct, setModalTmpProduct] = useState({})
     const [products, setProducts] = useState([])
+    const [modalNewItem, setModalNewItem] = useState(false)
 
 
     useEffect(async () => {
         setAllProduct(await getAllObject('Product'))
         setIsLoading(false)
+        OrderProducts.resetAll()
     }, [])
 
 
@@ -76,12 +79,33 @@ const OrderAddProduct = observer(() => {
                         <Table striped bordered hover>
                             <thead>
                             <tr className="row">
-                                <th className="text-start col-5">Item Details</th>
-                                <th className="text-center col-1">Quantity</th>
-                                <th className="text-center col-1">Rate</th>
-                                <th className="text-center col-2">Discount</th>
-                                <th className="text-center col-1">Amount</th>
-                                <th className="text-center col-2">Action</th>
+                                <th className="col-5">
+                                    <Row>
+                                        <Col className="col-4 align-self-center">
+                                            Item Details
+                                        </Col>
+                                        <Col className="col-4 align-self-center text-start">
+                                            <Button variant="outline-primary" onClick={() => setModalNewItem(true)}>Add
+                                                item</Button>
+                                            <Modal
+                                                show={modalNewItem}
+                                                onHide={() => setModalNewItem(false)}
+                                                dialogClassName="w-75"
+                                                size="xl"
+                                                aria-labelledby="example-custom-modal-styling-title">
+                                                <Modal.Header closeButton/>
+                                                <Modal.Body>
+                                                    <AddItem/>
+                                                </Modal.Body>
+                                            </Modal>
+                                        </Col>
+                                    </Row>
+                                </th>
+                                <th className="text-center align-self-center col-1">Quantity</th>
+                                <th className="text-center align-self-center col-1">Rate</th>
+                                <th className="text-center align-self-center col-2">Discount</th>
+                                <th className="text-center align-self-center col-1">Amount</th>
+                                <th className="text-center align-self-center col-2">Action</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -94,7 +118,11 @@ const OrderAddProduct = observer(() => {
                                                        id="rendering-example"
                                                        labelKey="info"
                                                        onChange={(obj) => {
-                                                           OrderProducts.edit(index, 'itemDetails', obj[0])
+                                                           if (obj[0] !== undefined) {
+                                                               OrderProducts.edit(index, 'itemDetails', obj[0])
+                                                           } else {
+                                                               OrderProducts.edit(index, 'itemDetails', null)
+                                                           }
                                                        }}
                                                        options={[
                                                            {
@@ -119,20 +147,23 @@ const OrderAddProduct = observer(() => {
                                         <td className="col-1">
                                             <Form.Control className="text-end"
                                                           value={OrderProducts.array[index].quantity}
-                                                          type="text"/>
+                                                          onChange={(e) => OrderProducts.edit(index, 'quantity', e.target.value)}
+                                                          type="number"/>
                                         </td>
                                         <td className="col-1">
                                             <Form.Control className="text-end" value={OrderProducts.array[index].rate}
-                                                          type="text"/>
+                                                          onChange={(e) => OrderProducts.edit(index, 'rate', e.target.value)}
+                                                          type="number"/>
                                         </td>
                                         <td className="col-2 d-flex">
                                             <Form.Control className="text-end"
                                                           value={OrderProducts.array[index].discount}
                                                           onChange={(e) => OrderProducts.edit(index, 'discount', e.target.value)}
-                                                          type="text"/>
+                                                          type="number"/>
                                             <Form.Select aria-label="Discount"
                                                          value={OrderProducts.array[index].discountTag}
-                                                         onChange={(e) => OrderProducts.edit(index, 'discountTag', e.target.value)}>
+                                                         onChange={(e) => OrderProducts.edit(index, 'discountTag', e.target.value)
+                                                         }>
                                                 <option value="$" selected>$</option>
                                                 <option value="%">%</option>
                                             </Form.Select>
@@ -190,14 +221,15 @@ const OrderAddProduct = observer(() => {
                             <Row className="m-2">
                                 <Row className="mb-3">
                                     <Col className="col-8 text-start">Sub Total</Col>
-                                    <Col className="col-4 text-end">2570.400</Col>
+                                    <Col className="col-4 text-end">{OrderProducts.subTotal}</Col>
                                 </Row>
                                 <Row className="mb-3">
                                     <Col className="col-4 text-start text-nowrap">Shipping Charges</Col>
                                     <Col className="col-4">
                                         <Row>
                                             <Col className="col-10">
-                                                <Form.Control type="text"/>
+                                                <Form.Control type="number" value={OrderProducts.shippingCharges}
+                                                              onChange={(e) => OrderProducts.setShippingCharges(e.target.value)}/>
                                             </Col>
                                             <Col className="col-2 align-self-center">
                                                 <OverlayTrigger overlay={<Tooltip>
@@ -218,16 +250,18 @@ const OrderAddProduct = observer(() => {
                                             </Col>
                                         </Row>
                                     </Col>
-                                    <Col className="col-4 text-end">2570.400</Col>
+                                    <Col className="col-4 text-end">{OrderProducts.shippingCharges}</Col>
                                 </Row>
                                 <Row className="mb-3">
                                     <Col className="col-4">
-                                        <Form.Control type="text"/>
+                                        <Form.Control type="text" value={OrderProducts.otherField.text}
+                                                      onChange={(e) => OrderProducts.editOtherField('text', e.target.value)}/>
                                     </Col>
                                     <Col className="col-4">
                                         <Row>
                                             <Col className="col-10">
-                                                <Form.Control type="text"/>
+                                                <Form.Control type="number" value={OrderProducts.otherField.price}
+                                                              onChange={(e) => OrderProducts.editOtherField('price', e.target.value)}/>
                                             </Col>
                                             <Col className="col-2 align-self-center">
                                                 <OverlayTrigger overlay={<Tooltip>
@@ -246,11 +280,11 @@ const OrderAddProduct = observer(() => {
                                             </Col>
                                         </Row>
                                     </Col>
-                                    <Col className="col-4 text-end">2570.400</Col>
+                                    <Col className="col-4 text-end">{OrderProducts.otherField.price}</Col>
                                 </Row>
                                 <Row className="mb-3">
                                     <Col className="col-6 text-start h6">Total ( $ )</Col>
-                                    <Col className="col-6 text-end h6">2693.400</Col>
+                                    <Col className="col-6 text-end h6">{OrderProducts.total}</Col>
                                 </Row>
                             </Row>
                         </Col>

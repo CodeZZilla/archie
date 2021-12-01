@@ -10,32 +10,23 @@ import {
     Modal,
     Row,
     Spinner,
-    Table,
     ToggleButton
 } from "react-bootstrap";
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 import Order from "../../Store/Order";
 import {
-    saveObject,
-    getAllObject,
-    getAllObjectByRelationField,
-    getRelObject,
-    getRelObjectDepth1, getRelObjectDepth1All
+    getAllObject, getRelObjectDepth1All
 } from "../../Business/BackendlessRequest"
-import {BsPlusLg} from "react-icons/all";
-import LocationAddEdit from "../Location/LocationAddEdit";
 import PatientAdd from "../Patient/PatientAdd";
-import SpectaclePrescriptionForm from "../Prescriptions/SpectaclePrescriptionForm";
-import ContactLensPrescription from "../../Store/ContactLensPrescription";
-import ContactLensPrescriptionForm from "../Prescriptions/ContactLensPrescriptionForm";
 import InsuranceForm from "../Insurance/InsuranceForm";
 import Backendless from "backendless";
 import OrderContactLensPrescription from "./OrderContactLensPrescription";
 import OrderSpectaclePrescription from "./OrderSpectaclePrescription";
 import SpectacleLensInfo from "../Prescriptions/SpectacleLensInfo";
-import Patient from "../../Store/Patient";
-import SpectacleLens from "../../Store/SpectacleLens";
 import OrderAddProduct from "./OrderAddProduct";
+import MyDatePicker from "../Inputs/MyDatePicker";
+import {FormControl, InputLabel, MenuItem, Select, TextField} from "@mui/material";
+
 
 
 const OrderAdd = observer(() => {
@@ -43,6 +34,7 @@ const OrderAdd = observer(() => {
     const [location, setLocation] = useState(null)
     const [showModalAddClient, setShowModalAddClient] = useState(false)
     const [clients, setClients] = useState([])
+
 
     const [radioValue, setRadioValue] = useState(null);
 
@@ -71,10 +63,6 @@ const OrderAdd = observer(() => {
             }
         }
 
-        let curr = new Date();
-        curr.setDate(curr.getDate());
-        let date = curr.toISOString().substr(0, 10);
-        Order.edit('date', date)
         setIsLoading(false)
     }, [])
 
@@ -102,66 +90,66 @@ const OrderAdd = observer(() => {
                         </Col>
                     </Row>
                     <Row className="mt-5">
-                        <Col className="col-3">
-                            <Form.Group className="mb-3">
-                                <Form.Label>Date order</Form.Label>
-                                <Form.Control type="date" placeholder="Date order" defaultValue={Order.object.date}
-                                              disabled/>
-                            </Form.Group>
+                        <Col className="col-4">
+                            <MyDatePicker/>
                         </Col>
-                        <Col className="col-3">
-                            <Form.Group className="mb-3">
-                                <Form.Label>Location</Form.Label>
-                                {/*<Form.Select className="me-sm-2" value={Order.object.location}*/}
-                                {/*             onChange={(obj) => Order.edit('location', obj.target.value)}>*/}
-                                {/*    <option value="null">Unselected</option>*/}
-                                {/*    {*/}
-                                {/*        locations.map(value => {*/}
-                                {/*            return <option key={value.objectId}*/}
-                                {/*                           value={value.objectId}>{value.name_location} {value.street_address}</option>*/}
-                                {/*        })*/}
-                                {/*    }*/}
-                                {/*</Form.Select>*/}
-                                <Form.Control type="text" placeholder="Location" defaultValue={location.name_location}
-                                              disabled/>
-                            </Form.Group>
+                        <Col className="col-4">
+                            <TextField size="small" id="location-field" label="Location" disabled defaultValue={location.name_location}/>
                         </Col>
-                        <Col className="col-3">
-                            <Form.Group className="mb-3">
-                                <Form.Label>Client</Form.Label>
-                                <div className="d-flex">
-                                    <Form.Select className="me-sm-2" value={Order.object.client}
-                                                 onChange={(obj) => Order.edit('client', obj.target.value)}>
-                                        <option value={null}>Unselected</option>
-                                        {
-                                            clients.map(value => {
-                                                return <option key={value.objectId}
-                                                               value={value.objectId}>{value.first_name} {value.last_name}</option>
-                                            })
-                                        }
-                                    </Form.Select>
-                                    <Button variant="outline-primary"
-                                            onClick={() => setShowModalAddClient(true)}>Add</Button>
-                                    <Modal
-                                        show={showModalAddClient}
-                                        onHide={() => setShowModalAddClient(false)}
-                                        dialogClassName="w-75"
-                                        size="xl"
-                                        aria-labelledby="example-custom-modal-styling-title">
-                                        <Modal.Header closeButton/>
-                                        <Modal.Body>
-                                            <PatientAdd btnText="Save" fun={async () => {
-                                                setShowModalAddClient(false)
-                                                setClients(await getAllObject('Client'))
-                                            }}/>
-                                        </Modal.Body>
-                                    </Modal>
-                                </div>
-                            </Form.Group>
+                        <Col className="col-4">
+                            <FormControl fullWidth className="text-start">
+                                <InputLabel id="client-select-label">Client</InputLabel>
+                                <Select
+                                    labelId="client-select-label"
+                                    id="client-select"
+                                    value={Order.object.client}
+                                    label="Client"
+                                    onChange={(obj) => Order.edit('client', obj.target.value)}
+                                >
+                                    <MenuItem value={null}>Unselected</MenuItem>
+                                    {
+                                        clients.map(value => {
+                                            return <MenuItem key={value.objectId}
+                                                           value={value.objectId}>{value.first_name} {value.last_name}</MenuItem>
+                                        })
+                                    }
+                                </Select>
+                            </FormControl>
+                            {/*<Form.Group className="mb-3">*/}
+                            {/*    <Form.Label>Client</Form.Label>*/}
+                            {/*    <div className="d-flex">*/}
+                            {/*        <Form.Select className="me-sm-2" value={Order.object.client}*/}
+                            {/*                     onChange={(obj) => Order.edit('client', obj.target.value)}>*/}
+                            {/*            <option value={null}>Unselected</option>*/}
+                            {/*            {*/}
+                            {/*                clients.map(value => {*/}
+                            {/*                    return <option key={value.objectId}*/}
+                            {/*                                   value={value.objectId}>{value.first_name} {value.last_name}</option>*/}
+                            {/*                })*/}
+                            {/*            }*/}
+                            {/*        </Form.Select>*/}
+                            {/*        <Button variant="outline-primary"*/}
+                            {/*                onClick={() => setShowModalAddClient(true)}>Add</Button>*/}
+                            {/*        <Modal*/}
+                            {/*            show={showModalAddClient}*/}
+                            {/*            onHide={() => setShowModalAddClient(false)}*/}
+                            {/*            dialogClassName="w-75"*/}
+                            {/*            size="xl"*/}
+                            {/*            aria-labelledby="example-custom-modal-styling-title">*/}
+                            {/*            <Modal.Header closeButton/>*/}
+                            {/*            <Modal.Body>*/}
+                            {/*                <PatientAdd btnText="Save" fun={async () => {*/}
+                            {/*                    setShowModalAddClient(false)*/}
+                            {/*                    setClients(await getAllObject('Client'))*/}
+                            {/*                }}/>*/}
+                            {/*            </Modal.Body>*/}
+                            {/*        </Modal>*/}
+                            {/*    </div>*/}
+                            {/*</Form.Group>*/}
                         </Col>
                         <Row className="mt-1 mb-1 justify-content-md-around">
                             <Col className="col-3 ">
-                                <Form.Group className="mb-3">
+                                <Form.Group className="mt-3 mb-3">
                                     <Form.Label>Order type</Form.Label>
                                     <ButtonGroup className="mb-2">
                                         {radios.map((radio, idx) => (
