@@ -56,8 +56,6 @@ const CompanyAdd = observer(({idCompany = null, fun}) => {
             } catch (error) {
                 AlertStatus.setAll(true, "Oh snap! You got an error!", error.message, "danger")
             }
-
-
             // try {
             //     let loadRelationsQueryBuilder = Backendless.LoadRelationsQueryBuilder.create();
             //     loadRelationsQueryBuilder.setRelationName("users_role");

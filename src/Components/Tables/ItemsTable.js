@@ -4,14 +4,16 @@ import DataTableExtensions from "react-data-table-component-extensions";
 import "react-data-table-component-extensions/dist/index.css";
 import {Button, IconButton, SvgIcon} from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
-import {Col, Container, Row} from "react-bootstrap";
+import {Col, Container, Modal, Row} from "react-bootstrap";
 import {Visibility} from "@mui/icons-material";
-import {useCallback, useEffect, useMemo, useState} from "react";
+import React, {useCallback, useEffect, useMemo, useState} from "react";
+import AddItem from "../Item/AddItem";
 
 const ItemsTable = observer(() => {
     const [selectedRows, setSelectedRows] = useState([]);
     const [toggleCleared, setToggleCleared] = useState(false);
     const [data, setData] = useState([]);
+    const [modalNewItem,setModalNewItem] = useState(false)
 
     useEffect(() => {
         setData([
@@ -129,7 +131,18 @@ const ItemsTable = observer(() => {
         <Container>
             <Row>
                 <Col>
-                    <Button>Add item</Button>
+                    <Button onClick={() => setModalNewItem(true) }>Add item</Button>
+                    <Modal
+                        show={modalNewItem}
+                        onHide={() => setModalNewItem(false)}
+                        dialogClassName="w-100"
+                        size="xl"
+                        fullscreen>
+                        <Modal.Header closeButton/>
+                        <Modal.Body>
+                            <AddItem/>
+                        </Modal.Body>
+                    </Modal>
                 </Col>
             </Row>
             <Row>

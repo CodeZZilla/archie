@@ -25,6 +25,7 @@ import {
 } from "react-icons/all";
 import OrderProducts from "../../Store/OrderProducts";
 import AddItemGroup from "../Item/AddItemGroup";
+import AddItem from "../Item/AddItem";
 
 const OrderAddProduct = observer(() => {
     const [allProduct, setAllProduct] = useState([])
@@ -96,7 +97,7 @@ const OrderAddProduct = observer(() => {
                                                 aria-labelledby="example-custom-modal-styling-title">
                                                 <Modal.Header closeButton/>
                                                 <Modal.Body>
-                                                    <AddItemGroup/>
+                                                    <AddItem/>
                                                 </Modal.Body>
                                             </Modal>
                                         </Col>
