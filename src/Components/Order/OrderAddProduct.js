@@ -24,7 +24,7 @@ import {
     IoMdRemoveCircle
 } from "react-icons/all";
 import OrderProducts from "../../Store/OrderProducts";
-import AddItem from "../Item/AddItem";
+import AddItemGroup from "../Item/AddItemGroup";
 
 const OrderAddProduct = observer(() => {
     const [allProduct, setAllProduct] = useState([])
@@ -90,12 +90,13 @@ const OrderAddProduct = observer(() => {
                                             <Modal
                                                 show={modalNewItem}
                                                 onHide={() => setModalNewItem(false)}
-                                                dialogClassName="w-75"
+                                                dialogClassName="w-100"
                                                 size="xl"
+                                                fullscreen
                                                 aria-labelledby="example-custom-modal-styling-title">
                                                 <Modal.Header closeButton/>
                                                 <Modal.Body>
-                                                    <AddItem/>
+                                                    <AddItemGroup/>
                                                 </Modal.Body>
                                             </Modal>
                                         </Col>

@@ -1,16 +1,32 @@
 import {observer} from "mobx-react-lite";
 import React, {useEffect, useState} from "react";
 import {Button, ButtonGroup, Col, Container, Form, Modal, Row, Spinner, Table, ToggleButton} from "react-bootstrap";
+import {Dropzone, FileItem} from "@dropzone-ui/react";
+import Item from "../../Store/Item";
 
 
-const AddItem = observer(() => {
+const AddItem = observer( () => {
     const [isLoading, setIsLoading] = useState(true)
-    const [radioValue, setRadioValue] = useState(null);
+    const [radioType, setRadioType] = useState(null);
+    const [radioTax, setRadioTax] = useState(null);
+    const [radioInv, setRadioInv] = useState(null);
     const [showModalAddGroup, setShowModalAddGroup] = useState(false)
+    const [showModalAddManufacturer, setShowModalAddManufacturer] = useState(false)
+    const [showModalAddBrand, setShowModalAddBrand] = useState(false)
 
-    const radios = [
+    const radiosType = [
         {name: 'Service', value: 'Service'},
         {name: 'Product', value: 'Product'},
+    ];
+
+    const radiosTax = [
+        {name: 'Taxable', value: 'Taxable'},
+        {name: 'Not-Taxable', value: 'Not-Taxable'},
+    ];
+
+    const radiosInv = [
+        {name: 'Inventory', value: 'Inventory'},
+        {name: 'Not-Inventory', value: 'Not-Inventory'},
     ];
 
     useEffect(async () => {
@@ -34,15 +50,15 @@ const AddItem = observer(() => {
                 <Container>
                     <Row>
                         <Col className="d-flex justify-content-between">
-                            <h1 className="text-center">New Item</h1>
-                            <Button className="d-flex justify-content-end " disabled type="button" variant="success"
+                            <h2 className="text-center">New Item</h2>
+                            <Button className="d-flex justify-content-end" type="button" variant="success"
                                     size="lg">
-                                Save Only
+                                Save
                             </Button>
                         </Col>
                     </Row>
-                    <Row className="mt-4">
-                        <Col className="col-6">
+                    <Row  className="mt-4">
+                        <Col className="col-5">
                             <Table borderless>
                                 <tbody>
                                 <tr className="row">
@@ -50,55 +66,22 @@ const AddItem = observer(() => {
                                         Type
                                     </th>
                                     <td className="col-8 text-start">
-                                        <ButtonGroup>
-                                            {radios.map((radio, idx) => (
+                                        <ButtonGroup className="w-100">
+                                            {radiosType.map((radioType, idx) => (
                                                 <ToggleButton
                                                     key={idx}
-                                                    id={`radio-${idx}`}
+                                                    id={`radioType-${idx}`}
                                                     type="radio"
                                                     variant="outline-primary"
                                                     name="radio"
-                                                    value={radio.value}
-                                                    checked={radioValue === radio.value}
-                                                    onChange={(e) => setRadioValue(e.currentTarget.value)}
+                                                    value={radioType.value}
+                                                    checked={radioType === radioType.value}
+                                                    onChange={(e) => setRadioType(e.currentTarget.value)}
                                                 >
-                                                    {radio.name}
+                                                    {radioType.name}
                                                 </ToggleButton>
                                             ))}
                                         </ButtonGroup>
-                                    </td>
-                                </tr>
-                                <tr className="row">
-                                    <th className="col-4 text-start align-self-center">
-                                        Item Group Name
-                                    </th>
-                                    <td className="col-8 text-start">
-                                        <Form.Group className="d-flex">
-                                            <div className="d-flex w-75">
-                                                <Form.Select className="me-sm-2">
-                                                    <option>Spectacle</option>
-                                                    <option>Contact Lens</option>
-                                                    <option>Lens</option>
-                                                    <option>Frame</option>
-                                                    <option>Other</option>
-                                                </Form.Select>
-                                                <Button variant="outline-primary"
-                                                        onClick={() => setShowModalAddGroup(true)}>Add</Button>
-                                                <Modal
-                                                    show={showModalAddGroup}
-                                                    onHide={() => setShowModalAddGroup(false)}
-                                                    dialogClassName="w-50"
-                                                    size="xl"
-                                                    aria-labelledby="example-custom-modal-styling-title">
-                                                    <Modal.Header closeButton/>
-                                                    <Modal.Body>
-                                                        <div>
-                                                            Xyi
-                                                        </div>
-                                                    </Modal.Body>
-                                                </Modal>
-                                            </div>
-                                        </Form.Group>
                                     </td>
                                 </tr>
                                 <tr className="row">
@@ -113,22 +96,168 @@ const AddItem = observer(() => {
                                 </tr>
                                 <tr className="row">
                                     <th className="col-4 text-start align-self-center">
-                                        Returnable Item
+
                                     </th>
-                                    <td className="col-8 text-start">
+                                    <td className="col-4 text-start">
                                         <Form.Check
                                             inline
+                                            label="Returnable Item"
                                             name="group1"
                                             type="checkbox"
                                             id="checkbox-1"
+                                        />
+                                    </td>
+                                    <td className="col-4 text-start">
+                                        <Form.Check
+                                            inline
+                                            label="Multiple Items?"
+                                            name="group2"
+                                            type="checkbox"
+                                            id="checkbox-2"
                                         />
                                     </td>
                                 </tr>
                                 </tbody>
                             </Table>
                         </Col>
-                        <Col className="col-3">
-
+                        <Col className="col-1"> </Col>
+                        <Col className="col-6">
+                            <Dropzone
+                                style={{minWidth: "505px"}}
+                                onChange={(incommingFiles) => Item.setFiles(incommingFiles)}
+                                value={Item.getFiles()}
+                                maxFiles={20}
+                                maxFileSize={20970000}
+                            >
+                                {Item.getFiles().map((file) =>
+                                    <FileItem {...file}
+                                              onDelete={(id) => Item.setFiles(Item.getFiles().filter((x) => x.id !== id))}
+                                              preview info key={file.id}/>
+                                )}
+                            </Dropzone>
+                        </Col>
+                    </Row>
+                    <Row  className="mt-4">
+                        <Col className="col-5">
+                            <Table borderless>
+                                <tbody>
+                                <tr className="row">
+                                    <th className="col-4 text-start align-self-center">
+                                        Tax Preference
+                                    </th>
+                                    <td className="col-8 text-start">
+                                        <ButtonGroup className="w-100">
+                                            {radiosTax.map((radioTax, idx) => (
+                                                <ToggleButton
+                                                    key={idx}
+                                                    id={`radioTax-${idx}`}
+                                                    type="radio"
+                                                    variant="outline-primary"
+                                                    name="radioTax"
+                                                    value={radioTax.value}
+                                                    checked={radioTax === radioTax.value}
+                                                    onChange={(e) => setRadioTax(e.currentTarget.value)}
+                                                >
+                                                    {radioTax.name}
+                                                </ToggleButton>
+                                            ))}
+                                        </ButtonGroup>
+                                    </td>
+                                </tr>
+                                <tr className="row">
+                                    <th className="col-4 text-start align-self-center">
+                                        Manufacturer
+                                    </th>
+                                    <td className="col-8 text-start">
+                                        <Form.Group className="d-flex">
+                                            <div className="d-flex w-100">
+                                                <Form.Select className="me-sm-2">
+                                                    <option>Some Manufacturer</option>
+                                                    <option>Some Manufacturer</option>
+                                                    <option>Some Manufacturer</option>
+                                                </Form.Select>
+                                                <Button variant="outline-primary"
+                                                        onClick={() => setShowModalAddManufacturer(true)}>Add</Button>
+                                                <Modal
+                                                    show={showModalAddManufacturer}
+                                                    onHide={() => setShowModalAddManufacturer(false)}
+                                                    dialogClassName="w-50"
+                                                    size="xl"
+                                                    aria-labelledby="example-custom-modal-styling-title">
+                                                    <Modal.Header closeButton/>
+                                                    <Modal.Body>
+                                                        <div>
+                                                            showModalAddManufacturer
+                                                        </div>
+                                                    </Modal.Body>
+                                                </Modal>
+                                            </div>
+                                        </Form.Group>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </Table>
+                        </Col>
+                        <Col className="col-1"> </Col>
+                        <Col className="col-5">
+                            <Table borderless>
+                                <tbody>
+                                <tr className="row">
+                                    <th className="col-4 text-start align-self-center">
+                                        Your Item Type
+                                    </th>
+                                    <td className="col-8 text-start">
+                                        <ButtonGroup className="w-100">
+                                            {radiosInv.map((radioInv, idx) => (
+                                                <ToggleButton
+                                                    key={idx}
+                                                    id={`radio-${idx}`}
+                                                    type="radio"
+                                                    variant="outline-primary"
+                                                    name="radioInv"
+                                                    value={radioInv.value}
+                                                    checked={radioInv === radioInv.value}
+                                                    onChange={(e) => setRadioInv(e.currentTarget.value)}
+                                                >
+                                                    {radioInv.name}
+                                                </ToggleButton>
+                                            ))}
+                                        </ButtonGroup>
+                                    </td>
+                                </tr>
+                                <tr className="row">
+                                    <th className="col-4 text-start align-self-center">
+                                        Brand
+                                    </th>
+                                    <td className="col-8 text-start">
+                                        <Form.Group className="d-flex">
+                                            <div className="d-flex w-100">
+                                                <Form.Select className="me-sm-2">
+                                                    <option>Some Brand</option>
+                                                    <option>Some Brand</option>
+                                                    <option>Some Brand</option>
+                                                </Form.Select>
+                                                <Button variant="outline-primary"
+                                                        onClick={() => setShowModalAddBrand(true)}>Add</Button>
+                                                <Modal
+                                                    show={showModalAddBrand}
+                                                    onHide={() => setShowModalAddBrand(false)}
+                                                    dialogClassName="w-50"
+                                                    size="xl"
+                                                    aria-labelledby="example-custom-modal-styling-title">
+                                                    <Modal.Header closeButton/>
+                                                    <Modal.Body>
+                                                        <div>
+                                                            showModalAddBrand
+                                                        </div>
+                                                    </Modal.Body>
+                                                </Modal>
+                                            </div>
+                                        </Form.Group>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </Table>
                         </Col>
                     </Row>
                 </Container>

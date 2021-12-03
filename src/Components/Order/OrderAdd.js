@@ -28,15 +28,16 @@ import MyDatePicker from "../Inputs/MyDatePicker";
 import {FormControl, InputLabel, MenuItem, Select, TextField} from "@mui/material";
 
 
-
 const OrderAdd = observer(() => {
     const [isLoading, setIsLoading] = useState(true)
     const [location, setLocation] = useState(null)
     const [showModalAddClient, setShowModalAddClient] = useState(false)
     const [clients, setClients] = useState([])
-
-
+    const [date, setDate] = useState(new Date())
     const [radioValue, setRadioValue] = useState(null);
+
+    let dateTMP = new Date(2002,12,1)
+    let dateUS = dateTMP.toLocaleDateString("en-US")
 
     const radios = [
         {name: 'Spectacles', value: 'Spectacles'},
@@ -46,6 +47,8 @@ const OrderAdd = observer(() => {
     ];
 
     useEffect(async () => {
+        console.log(dateUS)
+        console.log(dateTMP)
         //setLocation(await getRelObject())
         //Order.edit('location', )
         setClients(await getAllObject('Client'))
@@ -62,7 +65,6 @@ const OrderAdd = observer(() => {
                 }
             }
         }
-
         setIsLoading(false)
     }, [])
 
@@ -82,7 +84,7 @@ const OrderAdd = observer(() => {
                 <Container>
                     <Row>
                         <Col className="d-flex justify-content-between">
-                            <h1 className="text-center">Create new order</h1>
+                            <h2 className="text-center">New order</h2>
                             <Button className="d-flex justify-content-end" disabled type="button" variant="success"
                                     size="lg">
                                 Save Only
@@ -90,86 +92,83 @@ const OrderAdd = observer(() => {
                         </Col>
                     </Row>
                     <Row className="mt-5">
-                        <Col className="col-4">
-                            <MyDatePicker/>
+                        <Col className="col-3">
+                            <Form.Group className="mb-3">
+                                <Form.Label>Date Order</Form.Label>
+                                <Form.Control type="date" defaultValue={dateUS} className="text-center" size="sm" />
+                            </Form.Group>
                         </Col>
-                        <Col className="col-4">
-                            <TextField size="small" id="location-field" label="Location" disabled defaultValue={location.name_location}/>
+                        <Col className="col-3">
+                            <Form.Group className="mb-3">
+                                <Form.Label>Location</Form.Label>
+                                <Form.Control type="text" className="text-center" placeholder="John Doe" disabled
+                                              defaultValue={location.name_location}/>
+                            </Form.Group>
                         </Col>
-                        <Col className="col-4">
-                            <FormControl fullWidth className="text-start">
-                                <InputLabel id="client-select-label">Client</InputLabel>
-                                <Select
-                                    labelId="client-select-label"
-                                    id="client-select"
-                                    value={Order.object.client}
-                                    label="Client"
-                                    onChange={(obj) => Order.edit('client', obj.target.value)}
-                                >
-                                    <MenuItem value={null}>Unselected</MenuItem>
-                                    {
-                                        clients.map(value => {
-                                            return <MenuItem key={value.objectId}
-                                                           value={value.objectId}>{value.first_name} {value.last_name}</MenuItem>
-                                        })
-                                    }
-                                </Select>
-                            </FormControl>
-                            {/*<Form.Group className="mb-3">*/}
-                            {/*    <Form.Label>Client</Form.Label>*/}
-                            {/*    <div className="d-flex">*/}
-                            {/*        <Form.Select className="me-sm-2" value={Order.object.client}*/}
-                            {/*                     onChange={(obj) => Order.edit('client', obj.target.value)}>*/}
-                            {/*            <option value={null}>Unselected</option>*/}
-                            {/*            {*/}
-                            {/*                clients.map(value => {*/}
-                            {/*                    return <option key={value.objectId}*/}
-                            {/*                                   value={value.objectId}>{value.first_name} {value.last_name}</option>*/}
-                            {/*                })*/}
-                            {/*            }*/}
-                            {/*        </Form.Select>*/}
-                            {/*        <Button variant="outline-primary"*/}
-                            {/*                onClick={() => setShowModalAddClient(true)}>Add</Button>*/}
-                            {/*        <Modal*/}
-                            {/*            show={showModalAddClient}*/}
-                            {/*            onHide={() => setShowModalAddClient(false)}*/}
-                            {/*            dialogClassName="w-75"*/}
-                            {/*            size="xl"*/}
-                            {/*            aria-labelledby="example-custom-modal-styling-title">*/}
-                            {/*            <Modal.Header closeButton/>*/}
-                            {/*            <Modal.Body>*/}
-                            {/*                <PatientAdd btnText="Save" fun={async () => {*/}
-                            {/*                    setShowModalAddClient(false)*/}
-                            {/*                    setClients(await getAllObject('Client'))*/}
-                            {/*                }}/>*/}
-                            {/*            </Modal.Body>*/}
-                            {/*        </Modal>*/}
-                            {/*    </div>*/}
-                            {/*</Form.Group>*/}
+                        <Col className="col-3">
+                            <Form.Group className="mb-3">
+                                <Form.Label>Order Id</Form.Label>
+                                <Form.Control type="text" className="text-center" placeholder="02931" disabled/>
+                            </Form.Group>
                         </Col>
-                        <Row className="mt-1 mb-1 justify-content-md-around">
-                            <Col className="col-3 ">
-                                <Form.Group className="mt-3 mb-3">
-                                    <Form.Label>Order type</Form.Label>
-                                    <ButtonGroup className="mb-2">
-                                        {radios.map((radio, idx) => (
-                                            <ToggleButton
-                                                key={idx}
-                                                id={`radio-${idx}`}
-                                                type="radio"
-                                                variant="outline-primary"
-                                                name="radio"
-                                                value={radio.value}
-                                                checked={radioValue === radio.value}
-                                                onChange={(e) => setRadioValue(e.currentTarget.value)}
-                                            >
-                                                {radio.name}
-                                            </ToggleButton>
-                                        ))}
-                                    </ButtonGroup>
-                                </Form.Group>
-                            </Col>
-                        </Row>
+                        <Col className="col-3">
+                            <Form.Group className="mb-3">
+                                <Form.Label>Client</Form.Label>
+                                <div className="d-flex">
+                                    <Form.Select className="me-sm-2" value={Order.object.client}
+                                                 onChange={(obj) => Order.edit('client', obj.target.value)}>
+                                        <option value={null}>Unselected</option>
+                                        {
+                                            clients.map(value => {
+                                                return <option key={value.objectId}
+                                                               value={value.objectId}>{value.first_name} {value.last_name}</option>
+                                            })
+                                        }
+                                    </Form.Select>
+                                    <Button variant="outline-primary"
+                                            onClick={() => setShowModalAddClient(true)}>Add</Button>
+                                    <Modal
+                                        show={showModalAddClient}
+                                        onHide={() => setShowModalAddClient(false)}
+                                        dialogClassName="w-75"
+                                        size="xl"
+                                        aria-labelledby="example-custom-modal-styling-title">
+                                        <Modal.Header closeButton/>
+                                        <Modal.Body>
+                                            <PatientAdd btnText="Save" fun={async () => {
+                                                setShowModalAddClient(false)
+                                                setClients(await getAllObject('Client'))
+                                            }}/>
+                                        </Modal.Body>
+                                    </Modal>
+                                </div>
+                            </Form.Group>
+                        </Col>
+                    </Row>
+                    <Row className="mt-1 mb-1 justify-content-md-around">
+                        <Col className="col-3 ">
+                            <Form.Group className="mt-3 mb-3">
+                                <Form.Label>Order type</Form.Label>
+                                <ButtonGroup className="mb-2">
+                                    {radios.map((radio, idx) => (
+                                        <ToggleButton
+                                            key={idx}
+                                            id={`radio-${idx}`}
+                                            type="radio"
+                                            variant="outline-primary"
+                                            name="radio"
+                                            value={radio.value}
+                                            checked={radioValue === radio.value}
+                                            onChange={(e) => setRadioValue(e.currentTarget.value)}
+                                        >
+                                            {radio.name}
+                                        </ToggleButton>
+                                    ))}
+                                </ButtonGroup>
+                            </Form.Group>
+                        </Col>
+                    </Row>
+                    <Row>
                         <Col className="col-12">
                             {
                                 radioValue === "Spectacles" ?
@@ -280,6 +279,7 @@ const OrderAdd = observer(() => {
                             }
                         </Col>
                     </Row>
+
                 </Container>
             </div>
 

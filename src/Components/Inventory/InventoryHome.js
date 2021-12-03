@@ -1,5 +1,6 @@
 import {observer} from "mobx-react-lite";
 import {Col, Container, Row} from "react-bootstrap";
+import ItemsTable from "../Tables/ItemsTable";
 
 const InventoryHome = observer(() => {
 
@@ -11,7 +12,7 @@ const InventoryHome = observer(() => {
                 </Col>
             </Row>
             <Row>
-
+                <ItemsTable/>
             </Row>
         </Container>
     )
