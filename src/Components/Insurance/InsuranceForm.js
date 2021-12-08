@@ -20,7 +20,7 @@ const InsuranceForm = observer(({fun}) => {
         Order.reset()
     }, [])
 
-    let setOptions = async () =>{
+    let setOptions = async () => {
         let insurance = await getAllObject('InsuranceCompany')
         let options = []
         for (let item of insurance) {
@@ -49,8 +49,10 @@ const InsuranceForm = observer(({fun}) => {
                 <Col className="col-6">
                     <Form.Group className="mb-3 w-100" controlId="hobbies">
                         <Form.Label>Insurance</Form.Label>
-                        <div className="d-flex">
-                            <Select  isMulti className="m-2 w-75" options={insurance} onChange={(array)=>Order.edit("selectedInsurance",array)}  />
+                        <div className="text-start d-flex">
+                            <Select isMulti className="m-2 w-75"
+                                    options={insurance}
+                                    onChange={(array) => Order.edit("selectedInsurance", array)}/>
                             <Button className="m-2" variant="outline-primary" onClick={() => setShow(true)}>Add</Button>
                             <Modal
                                 show={show}
@@ -60,7 +62,7 @@ const InsuranceForm = observer(({fun}) => {
                                 aria-labelledby="example-custom-modal-styling-title">
                                 <Modal.Header closeButton/>
                                 <Modal.Body>
-                                    <InsuranceAdd fun={ async () => {
+                                    <InsuranceAdd fun={async () => {
                                         setShow(false)
                                         await setOptions()
                                     }}/>

@@ -11,38 +11,40 @@ import {
     Row,
     Spinner,
     Table,
-    Tooltip, InputGroup, FormControl
+    Tooltip
 } from "react-bootstrap";
 import {getAllObject} from "../../Business/BackendlessRequest";
 import Product from "../../Store/Product";
 import {Highlighter, Typeahead} from "react-bootstrap-typeahead";
-import {
-    AiTwotoneDelete,
-    FaBeer,
-    HiOutlineDotsCircleHorizontal,
-    IoIosRemoveCircleOutline,
-    IoMdRemoveCircle
-} from "react-icons/all";
 import OrderProducts from "../../Store/OrderProducts";
-import AddItemGroup from "../Item/AddItemGroup";
 import AddItem from "../Item/AddItem";
 
 const OrderAddProduct = observer(() => {
     const [allProduct, setAllProduct] = useState([])
     const [isLoading, setIsLoading] = useState(true)
-    const [showModalAddProduct, setShowModalAddProduct] = useState(false)
     const [showModalAddProductInOrder, setShowModalAddProductInOrder] = useState(false)
-    const [modalTmpProduct, setModalTmpProduct] = useState({})
-    const [products, setProducts] = useState([])
     const [modalNewItem, setModalNewItem] = useState(false)
-
+    const [options,setOptions] = useState([])
 
     useEffect(async () => {
         setAllProduct(await getAllObject('Product'))
+        await loadOptions()
         setIsLoading(false)
         OrderProducts.resetAll()
     }, [])
 
+    const loadOptions = async () => {
+        let arrayOptions = await getAllObject('Item')
+        let count = 0
+        for await(let item of arrayOptions){
+            item["name"] = "Item " + count++
+            item["sku"] = item.account
+            item["quantity"] = "1"
+            item["rate"] = item.cost_price
+            item["info"] = `${item.name} (sku, ${item.rate})`
+        }
+        setOptions(arrayOptions)
+    }
 
     let addProductInOrderEvent = () => {
         setShowModalAddProductInOrder(false)
@@ -65,7 +67,6 @@ const OrderAddProduct = observer(() => {
     return (
         isLoading ?
             <div>
-                <h1>Spectacle Lens Info</h1>
                 <Container className="mt-3 mb-3">
                     <Row className="justify-content-md-center">
                         <Spinner className="my-load-spinner" animation="border" variant="secondary" role="status">
@@ -126,22 +127,7 @@ const OrderAddProduct = observer(() => {
                                                                OrderProducts.edit(index, 'itemDetails', null)
                                                            }
                                                        }}
-                                                       options={[
-                                                           {
-                                                               name: "Item 0",
-                                                               sku: "SKU 0",
-                                                               quantity: "20",
-                                                               rate: "2100",
-                                                               info: "Item 0 (SKU 0, 2100)"
-                                                           },
-                                                           {
-                                                               name: "Item 1",
-                                                               sku: "SKU 1",
-                                                               quantity: "25",
-                                                               rate: "1234",
-                                                               info: "Item 1 (SKU 1, 1234)"
-                                                           }
-                                                       ]}
+                                                       options={options}
                                                        selected={OrderProducts.array[index].itemDetails !== null ? [OrderProducts.array[index].itemDetails] : []}
                                                        placeholder="Choose a item..."/>
 

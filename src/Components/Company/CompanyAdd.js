@@ -37,7 +37,6 @@ const CompanyAdd = observer(({idCompany = null, fun}) => {
         } else {
             Company.setCompany(await findObjectByObjectId("Company", idCompany))
         }
-
     }, [])
 
 
@@ -170,7 +169,7 @@ const CompanyAdd = observer(({idCompany = null, fun}) => {
             <Redirect to={"/company-item/" + redirectId}/> :
             <div>
                 <Form>
-                    <Container className="mt-5 mb-5">
+                    <Container>
                         <Row>
                             <Col className="col-12">
                                 <CustomAlert/>
@@ -178,7 +177,7 @@ const CompanyAdd = observer(({idCompany = null, fun}) => {
                         </Row>
                         <Row>
                             <Col className="d-flex justify-content-between">
-                                <h1 className="text-center">Create Company</h1>
+                                <h2 className="text-center">Create Company</h2>
                                 <Button className="d-flex justify-content-around" onClick={onFormSubmit} type="submit"
                                         variant="success"
                                         size="lg">
